@@ -9,6 +9,8 @@ public class NPCPatrol : MonoBehaviour
     public Transform[] waypoints;
     [Tooltip("How long the NPC waits before moving to the next waypoint.")]
     public float waitTimeAtWaypoint = 2f;
+    [Tooltip("If true, the NPC loops forever. If false, it stops at the last waypoint and calls SitDown() on NpcCustomer.")]
+    public bool loopPatrol = true;
 
     [Header("Animation")]
     public Animator animator;
@@ -17,19 +19,32 @@ public class NPCPatrol : MonoBehaviour
     private int currentWaypointIndex = 0;
     private bool isWaiting = false;
     private float waitTimer = 0f;
+    private bool hasReachedEnd = false;
+
+    void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        GoToWaypoint(0);
+    }
 
-        // Go to the first waypoint if there are any
-        if (waypoints.Length > 0 && waypoints[0] != null)
+    void OnEnable()
+    {
+        // When re-enabled (e.g. after NPC stands up to leave), make sure agent is unpaused
+        if (agent != null)
         {
-            agent.SetDestination(waypoints[0].position);
+            agent.isStopped = false;
         }
-        else
+
+        // Only go to first waypoint if we actually have some assigned
+        if (waypoints != null && waypoints.Length > 0)
         {
-            Debug.LogWarning("NPC has no waypoints assigned! Please assign them in the inspector.");
+            hasReachedEnd = false;
+            currentWaypointIndex = 0;
+            GoToWaypoint(0);
         }
     }
 
@@ -38,29 +53,42 @@ public class NPCPatrol : MonoBehaviour
         // Update the animator based on the NavMeshAgent's speed
         if (animator != null)
         {
-            // If the agent's velocity is greater than 0.1, it's moving
             animator.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
         }
 
-        // If no waypoints are set, stop executing patrol logic
-        if (waypoints.Length == 0) return;
+        // If no waypoints are set or we reached the end of a non-looping path, do nothing
+        if (waypoints == null || waypoints.Length == 0 || hasReachedEnd) return;
 
-        // Check if we reached the current waypoint destination
+        // Check if we've arrived at the current waypoint
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             if (!isWaiting)
             {
-                // Start waiting
+                // Arrived — check if this is the last stop on a non-looping path
+                if (!loopPatrol && currentWaypointIndex >= waypoints.Length - 1)
+                {
+                    hasReachedEnd = true;
+
+                    // Tell the NpcCustomer to sit down
+                    NpcCustomer customer = GetComponent<NpcCustomer>();
+                    if (customer == null) customer = GetComponentInChildren<NpcCustomer>();
+                    if (customer != null)
+                    {
+                        customer.SitDown();
+                    }
+                    return;
+                }
+
+                // Start waiting at this waypoint
                 isWaiting = true;
                 waitTimer = waitTimeAtWaypoint;
             }
             else
             {
-                // Count down the wait timer
+                // Count down wait timer
                 waitTimer -= Time.deltaTime;
                 if (waitTimer <= 0f)
                 {
-                    // Timer finished, go to next waypoint
                     isWaiting = false;
                     GoToNextWaypoint();
                 }
@@ -70,14 +98,37 @@ public class NPCPatrol : MonoBehaviour
 
     void GoToNextWaypoint()
     {
-        if (waypoints.Length == 0) return;
-
-        // Move to the next index, loop back to 0 if at the end of the array
+        if (waypoints == null || waypoints.Length == 0) return;
         currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-        
-        if (waypoints[currentWaypointIndex] != null)
+        GoToWaypoint(currentWaypointIndex);
+    }
+
+    void GoToWaypoint(int index)
+    {
+        if (waypoints == null || index >= waypoints.Length) return;
+        if (waypoints[index] != null)
         {
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
+            agent.SetDestination(waypoints[index].position);
         }
+    }
+
+    /// <summary>
+    /// Called by NpcCustomer.StandUpAndLeave() to give the NPC a new set of waypoints to walk to.
+    /// </summary>
+    public void SetNewWaypoints(Transform[] newWaypoints)
+    {
+        waypoints = newWaypoints;
+        hasReachedEnd = false;
+        isWaiting = false;
+        currentWaypointIndex = 0;
+        loopPatrol = true; // Loop the leave waypoints so the NPC walks around normally again
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+        }
+
+        GoToWaypoint(0);
+        Debug.Log("[NPCPatrol] New waypoints assigned. NPC is walking away.");
     }
 }

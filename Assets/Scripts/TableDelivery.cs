@@ -1,59 +1,81 @@
 using UnityEngine;
 
 /// <summary>
-/// Gắn vào một Empty GameObject đặt tại mặt bàn.
-/// Khi player đến gần và nhấn E (đang cầm tô), tô sẽ được đặt lên bàn.
+/// Attach to an Empty GameObject at the table position.
+/// Starts DISABLED - NpcCustomer.SitDown() will enable it when a customer arrives.
+/// Uses OnTriggerStay so it works with the Box Collider.
 /// </summary>
+[RequireComponent(typeof(Collider))]
 public class TableDelivery : MonoBehaviour
 {
     [Header("Settings")]
-    public float detectRange = 2f;
     public KeyCode deliverKey = KeyCode.E;
     public string requiredItemName = "HuTieu";
 
     [Header("Bowl Placement")]
-    public Transform bowlPlacePoint;   // Điểm đặt tô trên bàn (đặt Empty GO tại đây)
-    public GameObject placedBowlPrefab; // Prefab tô để hiển thị trên bàn sau khi đặt
+    public Transform bowlPlacePoint;        // Empty GO placed on top of the table
+    public GameObject placedBowlPrefab;     // Prefab of the bowl to show on table
+    public float bowlRemoveDelay = 5f;      // Seconds before the bowl disappears
 
     [Header("UI (optional)")]
-    public InteractPromptUI promptUI;  // Có thể gán cùng canvas hoặc riêng
+    public InteractPromptUI promptUI;
 
     [Header("NPC Reaction")]
-    public NpcCustomer linkedNpc;      // NPC sẽ phản ứng khi nhận được tô
+    public NpcCustomer linkedNpc;           // Link to the NpcCustomer sitting at this table
 
-    private PlayerInteract playerInteract;
     private bool bowlDelivered = false;
+    private GameObject spawnedBowl = null;
 
-    void Start()
+    private bool playerInRange = false;
+    private PlayerInteract currentPlayer = null;
+
+    void OnEnable()
     {
-        // Tìm player tự động
-        var playerGO = GameObject.FindWithTag("Player");
-        if (playerGO != null)
-            playerInteract = playerGO.GetComponent<PlayerInteract>();
+        // Reset state every time this table becomes active (new customer arrives)
+        bowlDelivered = false;
+        spawnedBowl = null;
+        playerInRange = false;
+        currentPlayer = null;
 
         if (promptUI != null)
             promptUI.Hide();
+            
+        // Ensure the collider is a trigger
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.isTrigger = true;
+    }
+
+    void OnDisable()
+    {
+        // Clean up bowl if the NPC left before it was removed
+        if (spawnedBowl != null)
+        {
+            Destroy(spawnedBowl);
+            spawnedBowl = null;
+        }
+
+        if (promptUI != null)
+            promptUI.Hide();
+            
+        playerInRange = false;
+        currentPlayer = null;
     }
 
     void Update()
     {
-        if (bowlDelivered) return;
-        if (playerInteract == null) return;
+        if (bowlDelivered || !playerInRange || currentPlayer == null) return;
 
-        float dist = Vector3.Distance(transform.position, playerInteract.transform.position);
-        bool inRange = dist <= detectRange;
-
-        // Hiện/ẩn UI prompt
+        // Show/hide UI prompt
         if (promptUI != null)
         {
-            if (inRange && playerInteract.IsHoldingItem())
+            if (currentPlayer.IsHoldingItem())
                 promptUI.Show("Bàn", "Nhấn E để đặt hủ tiếu");
             else
                 promptUI.Hide();
         }
 
-        // Nhận input
-        if (inRange && playerInteract.IsHoldingItem() && Input.GetKeyDown(deliverKey))
+        // Receive delivery input
+        if (currentPlayer.IsHoldingItem() && Input.GetKeyDown(deliverKey))
         {
             DeliverBowl();
         }
@@ -61,33 +83,71 @@ public class TableDelivery : MonoBehaviour
 
     void DeliverBowl()
     {
-        // Bảo player thả tô
-        playerInteract.DropItemForDelivery();
+        // Take the item from the player
+        currentPlayer.DropItemForDelivery();
 
-        // Spawn tô trên bàn (nếu có prefab)
+        // Spawn bowl on the table
         if (placedBowlPrefab != null)
         {
-            Vector3 placePos = bowlPlacePoint != null ? bowlPlacePoint.position : transform.position + Vector3.up * 0.1f;
-            Instantiate(placedBowlPrefab, placePos, Quaternion.identity);
+            Vector3 placePos = bowlPlacePoint != null
+                ? bowlPlacePoint.position
+                : transform.position + Vector3.up * 0.1f;
+            spawnedBowl = Instantiate(placedBowlPrefab, placePos, Quaternion.identity);
+
+            // Schedule bowl removal
+            Invoke(nameof(RemoveBowl), bowlRemoveDelay);
         }
 
         bowlDelivered = true;
 
-        // Thông báo NPC
+        // Award $1 to the player
+        MoneyManager.AddMoney(1);
+
+        // Notify NPC they received their food
         if (linkedNpc != null)
             linkedNpc.ReceiveItem(requiredItemName);
 
         if (promptUI != null)
             promptUI.Hide();
 
-        Debug.Log("[Table] Đã đặt hủ tiếu lên bàn!");
+        Debug.Log("[Table] Hủ tiếu đã được đặt lên bàn! Player nhận $1.");
     }
 
-    void OnDrawGizmosSelected()
+    void RemoveBowl()
     {
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f);
-        Gizmos.DrawSphere(transform.position, detectRange);
-        Gizmos.color = new Color(1f, 0.5f, 0f, 1f);
-        Gizmos.DrawWireSphere(transform.position, detectRange);
+        if (spawnedBowl != null)
+        {
+            Destroy(spawnedBowl);
+            spawnedBowl = null;
+            Debug.Log("[Table] Tô hủ tiếu đã biến mất.");
+        }
+    }
+
+    // Use triggers so we rely on the Box Collider size instead of a single center point
+    void OnTriggerStay(Collider other)
+    {
+        if (bowlDelivered || !this.enabled) return;
+
+        PlayerInteract pi = other.GetComponent<PlayerInteract>();
+        if (pi == null) pi = other.GetComponentInParent<PlayerInteract>();
+
+        if (pi != null)
+        {
+            playerInRange = true;
+            currentPlayer = pi;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        PlayerInteract pi = other.GetComponent<PlayerInteract>();
+        if (pi == null) pi = other.GetComponentInParent<PlayerInteract>();
+
+        if (pi != null)
+        {
+            playerInRange = false;
+            currentPlayer = null;
+            if (promptUI != null) promptUI.Hide();
+        }
     }
 }
