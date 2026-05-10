@@ -53,7 +53,7 @@ public class NpcOrderInteract : MonoBehaviour
 
         if (isReadyToOrder && playerInRange)
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.F))
             {
                 ConfirmOrder();
             }

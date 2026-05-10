@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.85, b: 0.2, a: 1}
+  m_Color: {r: 0, g: 0.7851281, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -190,7 +190,7 @@ Transform:
   - {fileID: 7880226281928517205}
   - {fileID: 7607194106847609262}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!195 &897104918688781207
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -272,7 +272,7 @@ MonoBehaviour:
   customer: {fileID: 0}
   promptUI: {fileID: 8378510682322326390}
   orderText: I want 1 To Hu Tieu
-  actionHint: press E to confirm order
+  actionHint: press F to confirm order
   detectRange: 2.5
 --- !u!1 &3345109332670769552
 GameObject:
@@ -479,7 +479,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Hold E to take h\u1EE7 ti\u1EBFu"
+  m_Text: "Hold F to take h\u1EE7 ti\u1EBFu"
 --- !u!1 &5181022777580723511
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,7 +678,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: E
+  m_Text: F
 --- !u!1 &8155730984336235555
 GameObject:
   m_ObjectHideFlags: 0
