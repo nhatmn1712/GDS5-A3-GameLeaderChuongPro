@@ -170,7 +170,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Hold E to take h\u1EE7 ti\u1EBFu"
+  m_Text: "HOLD E to take H\u1EE7 ti\u1EBFu\nPRESS E to serve H\u1EE7 ti\u1EBFu at
+    the table "
 --- !u!222 &22638372
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -195,8 +196,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2}
-  m_SizeDelta: {x: -16, y: -4}
+  m_AnchoredPosition: {x: 4.000099, y: 0.000030517578}
+  m_SizeDelta: {x: -8, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &65972288
 GameObject:
@@ -3866,7 +3867,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FoodCartInteract
   noodleBowlPrefab: {fileID: 2248526687212686481, guid: 3a6c1e2ff125d60499d78ebc7ff0a4db, type: 3}
   cartName: "Xe H\u1EE7 Ti\u1EBFu"
-  actionHint: "Hold E to take h\u1EE7 ti\u1EBFu"
+  actionHint: "HOLD E to take H\u1EE7 ti\u1EBFu PRESS E to serve H\u1EE7 ti\u1EBFu
+    at the table "
   holdDuration: 1.5
   detectRange: 2.5
   interactKey: 101
@@ -3948,7 +3950,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 4.41}
-  m_SizeDelta: {x: 340, y: 80}
+  m_SizeDelta: {x: 340, y: 90.09}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &615979225
 MonoBehaviour:
@@ -12295,7 +12297,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.4495815, g: 0.4641509, b: 0.3038875, a: 1}
+  m_Color: {r: 0.29892927, g: 0.3018868, b: 0.26343894, a: 1}
   m_Intensity: 4.26
   m_Range: 10
   m_SpotAngle: 30
@@ -13707,8 +13709,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 42, y: 0}
-  m_SizeDelta: {x: -84, y: 0}
+  m_AnchoredPosition: {x: 38.199997, y: 0}
+  m_SizeDelta: {x: -76.4, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1667686061
 PrefabInstance:
