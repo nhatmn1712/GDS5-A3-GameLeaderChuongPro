@@ -149,7 +149,18 @@ public class NpcCustomer : MonoBehaviour
                 return;
             }
 
-            // Otherwise, pick a new random spot to walk to
+            // Otherwise, pick a random waypoint from the Restaurant Manager to walk to
+            if (RestaurantManager.Instance != null)
+            {
+                Transform wanderDest = RestaurantManager.Instance.GetRandomWanderWaypoint();
+                if (wanderDest != null)
+                {
+                    agent.SetDestination(wanderDest.position);
+                    return;
+                }
+            }
+
+            // Fallback if no waypoints are set up
             Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
             agent.SetDestination(newPos);
         }

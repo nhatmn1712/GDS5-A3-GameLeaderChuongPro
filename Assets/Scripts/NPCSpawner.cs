@@ -6,10 +6,10 @@ public class NPCSpawner : MonoBehaviour
     [Header("Spawning Setup")]
     [Tooltip("Add multiple NPC Prefabs here to spawn random variations!")]
     public GameObject[] npcPrefabs;
-    [Tooltip("Where NPCs appear.")]
-    public Transform spawnPoint;
-    [Tooltip("Where NPCs walk to when they leave the shop.")]
-    public Transform despawnPoint;
+    [Tooltip("Add multiple Spawn Points here. NPCs will pick one randomly when appearing.")]
+    public Transform[] spawnPoints;
+    [Tooltip("Add multiple Despawn Points here. NPCs will pick one randomly when leaving.")]
+    public Transform[] despawnPoints;
 
     [Header("Settings")]
     public int maxCustomers = 4;
@@ -40,19 +40,21 @@ public class NPCSpawner : MonoBehaviour
 
     void SpawnNPC()
     {
-        if (npcPrefabs == null || npcPrefabs.Length == 0 || spawnPoint == null) return;
+        if (npcPrefabs == null || npcPrefabs.Length == 0 || spawnPoints == null || spawnPoints.Length == 0) return;
 
-        // Pick a random prefab from the list
+        // Pick random prefab, spawn point, and despawn point
         GameObject prefabToSpawn = npcPrefabs[Random.Range(0, npcPrefabs.Length)];
+        Transform randomSpawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Transform randomDespawn = despawnPoints != null && despawnPoints.Length > 0 ? despawnPoints[Random.Range(0, despawnPoints.Length)] : null;
 
-        GameObject newNpc = Instantiate(prefabToSpawn, spawnPoint.position, spawnPoint.rotation);
+        GameObject newNpc = Instantiate(prefabToSpawn, randomSpawn.position, randomSpawn.rotation);
         activeCustomers.Add(newNpc);
         
         // Ensure the NPC knows where to go when it leaves
         NpcCustomer customer = newNpc.GetComponent<NpcCustomer>();
         if (customer != null)
         {
-            customer.despawnPoint = despawnPoint;
+            customer.despawnPoint = randomDespawn;
         }
     }
 }

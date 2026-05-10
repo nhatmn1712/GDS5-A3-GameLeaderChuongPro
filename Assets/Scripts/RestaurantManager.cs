@@ -12,6 +12,9 @@ public class RestaurantManager : MonoBehaviour
     [Tooltip("The waypoint where NPCs stand to order food.")]
     public Transform orderSpot;
     
+    [Tooltip("Drag empty GameObjects here for NPCs to wander between when they are waiting.")]
+    public Transform[] wanderWaypoints;
+
     [Header("Tables")]
     [Tooltip("Drag all your TableDelivery objects here.")]
     public List<TableDelivery> allTables;
@@ -73,5 +76,17 @@ public class RestaurantManager : MonoBehaviour
         {
             availableTables.Add(table);
         }
+    }
+
+    /// <summary>
+    /// Returns a random waypoint for the NPC to walk to while waiting.
+    /// </summary>
+    public Transform GetRandomWanderWaypoint()
+    {
+        if (wanderWaypoints != null && wanderWaypoints.Length > 0)
+        {
+            return wanderWaypoints[Random.Range(0, wanderWaypoints.Length)];
+        }
+        return null;
     }
 }
