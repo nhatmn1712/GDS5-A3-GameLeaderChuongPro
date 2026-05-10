@@ -11,8 +11,9 @@ public class MoneyManager : MonoBehaviour
     [Header("Money")]
     public int playerMoney = 0;
 
-    // TODO: In the future, assign a UI Text here to show money on screen (top-right panel)
-    // public TMPro.TextMeshProUGUI moneyText;
+    [Header("UI")]
+    [Tooltip("Drag your MoneyText (TextMeshPro) from the Canvas into this slot.")]
+    public TMPro.TextMeshProUGUI moneyText;
 
     void Awake()
     {
@@ -23,6 +24,11 @@ public class MoneyManager : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    void Start()
+    {
+        UpdateUI();
     }
 
     /// <summary>Call this to add money to the player's total.</summary>
@@ -36,9 +42,15 @@ public class MoneyManager : MonoBehaviour
 
         Instance.playerMoney += amount;
         Debug.Log($"[MoneyManager] +${amount} earned! Total: ${Instance.playerMoney}");
+        Instance.UpdateUI();
+    }
 
-        // TODO: Update UI when you have the money image ready
-        // if (Instance.moneyText != null)
-        //     Instance.moneyText.text = "$" + Instance.playerMoney;
+    private void UpdateUI()
+    {
+        if (moneyText != null)
+        {
+            // Update the text to just the number, since you have a separate $ icon
+            moneyText.text = playerMoney.ToString();
+        }
     }
 }
