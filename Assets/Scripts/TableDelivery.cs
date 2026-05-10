@@ -21,6 +21,8 @@ public class TableDelivery : MonoBehaviour
     public InteractPromptUI promptUI;
 
     [Header("NPC Reaction")]
+    [Tooltip("Where the NPC should sit. Drag your Waypoint 5 here.")]
+    public Transform chairWaypoint;
     public NpcCustomer linkedNpc;           // Link to the NpcCustomer sitting at this table
 
     private bool bowlDelivered = false;

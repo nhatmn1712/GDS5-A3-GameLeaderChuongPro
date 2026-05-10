@@ -20,6 +20,7 @@ public class NPCPatrol : MonoBehaviour
     private bool isWaiting = false;
     private float waitTimer = 0f;
     private bool hasReachedEnd = false;
+    private bool isPaused = false;
 
     void Awake()
     {
@@ -85,6 +86,8 @@ public class NPCPatrol : MonoBehaviour
             }
             else
             {
+                if (isPaused) return; // Wait here until unpaused
+
                 // Count down wait timer
                 waitTimer -= Time.deltaTime;
                 if (waitTimer <= 0f)
@@ -130,5 +133,27 @@ public class NPCPatrol : MonoBehaviour
 
         GoToWaypoint(0);
         Debug.Log("[NPCPatrol] New waypoints assigned. NPC is walking away.");
+    }
+
+    public void PausePatrol()
+    {
+        isPaused = true;
+    }
+
+    public void ResumePatrol()
+    {
+        isPaused = false;
+        // Reset timer so it moves to next waypoint immediately upon resume
+        waitTimer = 0f; 
+    }
+
+    public int GetCurrentWaypointIndex()
+    {
+        return currentWaypointIndex;
+    }
+
+    public bool IsWaiting()
+    {
+        return isWaiting;
     }
 }

@@ -1,109 +1,224 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// NPC customer that walks to the food cart, sits at a table,
-/// waits for food, then stands up and leaves after eating.
-/// </summary>
 public class NpcCustomer : MonoBehaviour
 {
+    public enum NpcState
+    {
+        Wandering,
+        GoingToOrder,
+        Ordering,
+        GoingToTable,
+        Eating,
+        Leaving
+    }
+
+    [Header("State")]
+    public NpcState currentState = NpcState.Wandering;
+
     [Header("Item Settings")]
     public string desiredItem = "HuTieu";
     public bool hasReceivedItem = false;
 
     [Header("Sitting Setup")]
-    [Tooltip("Name of the sitting animation state in the Animator Controller")]
     public string sittingStateName = "Sitting Idle";
-    [Tooltip("Name of the idle/standing animation state in the Animator Controller")]
     public string standingStateName = "Standing Idle";
     public bool autoAdjustHeight = false;
     public float sittingYOffset = 0f;
 
     [Header("After Eating - Leave")]
-    [Tooltip("How many seconds the NPC sits after receiving food before standing up.")]
     public float waitTimeBeforeLeaving = 5f;
-    [Tooltip("Waypoints the NPC walks to AFTER eating and leaving the table.")]
-    public Transform[] leaveWaypoints;
+    [HideInInspector] public Transform despawnPoint;
 
-    [Header("Table Link")]
-    [Tooltip("The TableDelivery script on this NPC's table. It will be enabled when the NPC sits down.")]
-    public TableDelivery linkedTable;
+    [Header("Wander Settings")]
+    public float wanderRadius = 10f;
+    public float wanderCheckInterval = 5f;
 
     private Animator animator;
-    private bool isSitting = false;
+    private NavMeshAgent agent;
+    private TableDelivery assignedTable;
+    
+    private float wanderTimer = 0f;
     private float leaveTimer = 0f;
     private bool isWaitingToLeave = false;
 
-    void Start()
+    void Awake()
     {
         animator = GetComponentInChildren<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        
+        // Disable old scripts if they exist to prevent conflicts
+        var patrol = GetComponent<NPCPatrol>();
+        if (patrol != null) patrol.enabled = false;
+        
+        var randomWander = GetComponent<NPCRandomWander>();
+        if (randomWander != null) randomWander.enabled = false;
+    }
+
+    void Start()
+    {
+        SwitchState(NpcState.Wandering);
     }
 
     void Update()
     {
-        if (!isWaitingToLeave) return;
+        UpdateAnimator();
 
-        leaveTimer -= Time.deltaTime;
-        if (leaveTimer <= 0f)
+        switch (currentState)
         {
-            isWaitingToLeave = false;
-            StandUpAndLeave();
+            case NpcState.Wandering:
+                UpdateWandering();
+                break;
+            case NpcState.GoingToOrder:
+                UpdateGoingToOrder();
+                break;
+            case NpcState.Ordering:
+                // Waiting for NpcOrderInteract to call OnOrderConfirmed()
+                break;
+            case NpcState.GoingToTable:
+                UpdateGoingToTable();
+                break;
+            case NpcState.Eating:
+                UpdateEating();
+                break;
+            case NpcState.Leaving:
+                UpdateLeaving();
+                break;
         }
     }
 
-    /// <summary>Called by NPCPatrol when the NPC reaches the final (table) waypoint.</summary>
-    public void SitDown()
+    void UpdateAnimator()
     {
-        isSitting = true;
-
-        // Stop all movement
-        var patrol = GetComponent<NPCPatrol>();
-        if (patrol != null) patrol.enabled = false;
-
-        var wander = GetComponentInParent<NPCRandomWander>();
-        if (wander == null) wander = GetComponent<NPCRandomWander>();
-        if (wander != null) wander.enabled = false;
-
-        var navAgent = GetComponentInParent<NavMeshAgent>();
-        if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
-        if (navAgent != null)
+        if (animator != null && agent != null)
         {
-            navAgent.isStopped = true;
-            navAgent.velocity = Vector3.zero;
+            animator.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
         }
+    }
 
-        // Play sitting animation
-        if (animator != null)
+    public void SwitchState(NpcState newState)
+    {
+        currentState = newState;
+
+        switch (newState)
         {
-            foreach (var param in animator.parameters)
-            {
-                if (param.name == "IsSitting" && param.type == AnimatorControllerParameterType.Bool)
+            case NpcState.Wandering:
+                wanderTimer = wanderCheckInterval;
+                break;
+            case NpcState.GoingToOrder:
+                agent.isStopped = false;
+                if (RestaurantManager.Instance != null && RestaurantManager.Instance.orderSpot != null)
                 {
-                    animator.SetBool("IsSitting", true);
-                    animator.SetBool("IsMoving", false);
-                    Debug.Log("[NpcCustomer] Set IsSitting = true");
-                    break;
+                    agent.SetDestination(RestaurantManager.Instance.orderSpot.position);
+                }
+                break;
+            case NpcState.Ordering:
+                agent.isStopped = true;
+                break;
+            case NpcState.GoingToTable:
+                agent.isStopped = false;
+                if (assignedTable != null && assignedTable.chairWaypoint != null)
+                {
+                    agent.SetDestination(assignedTable.chairWaypoint.position);
+                }
+                break;
+            case NpcState.Eating:
+                SitDown();
+                break;
+            case NpcState.Leaving:
+                agent.isStopped = false;
+                if (despawnPoint != null)
+                {
+                    agent.SetDestination(despawnPoint.position);
+                }
+                break;
+        }
+    }
+
+    void UpdateWandering()
+    {
+        wanderTimer += Time.deltaTime;
+
+        if (wanderTimer >= wanderCheckInterval)
+        {
+            wanderTimer = 0f;
+
+            // Check if we can order food
+            if (RestaurantManager.Instance != null && RestaurantManager.Instance.TryReserveOrderSpot())
+            {
+                SwitchState(NpcState.GoingToOrder);
+                return;
+            }
+
+            // Otherwise, pick a new random spot to walk to
+            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+            agent.SetDestination(newPos);
+        }
+    }
+
+    void UpdateGoingToOrder()
+    {
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            SwitchState(NpcState.Ordering);
+        }
+    }
+
+    // Called by NpcOrderInteract when player presses E
+    public void OnOrderConfirmed()
+    {
+        if (currentState == NpcState.Ordering)
+        {
+            if (RestaurantManager.Instance != null)
+            {
+                RestaurantManager.Instance.ReleaseOrderSpot();
+                assignedTable = RestaurantManager.Instance.TryGetTable();
+                
+                if (assignedTable != null)
+                {
+                    assignedTable.linkedNpc = this;
+                    SwitchState(NpcState.GoingToTable);
+                }
+                else
+                {
+                    // Failsafe: if no tables suddenly, go back to wandering
+                    SwitchState(NpcState.Wandering);
                 }
             }
+        }
+    }
+
+    void UpdateGoingToTable()
+    {
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            SwitchState(NpcState.Eating);
+        }
+    }
+
+    public void SitDown()
+    {
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+
+        if (animator != null)
+        {
+            animator.SetBool("IsSitting", true);
+            animator.SetBool("IsMoving", false);
             animator.Play(sittingStateName, 0, 0f);
         }
 
-        // Adjust height if needed
         if (autoAdjustHeight)
         {
             var pos = transform.localPosition;
             transform.localPosition = new Vector3(pos.x, sittingYOffset, pos.z);
         }
 
-        // Activate the table so the player can deliver food
-        if (linkedTable != null)
+        if (assignedTable != null)
         {
-            linkedTable.enabled = true;
-            Debug.Log("[NpcCustomer] Table delivery enabled.");
+            assignedTable.enabled = true;
         }
     }
 
-    /// <summary>Called by TableDelivery when food is placed on the table.</summary>
     public bool ReceiveItem(string itemName)
     {
         if (!hasReceivedItem && itemName == desiredItem)
@@ -111,7 +226,6 @@ public class NpcCustomer : MonoBehaviour
             hasReceivedItem = true;
             Debug.Log("[NPC] Cảm ơn nhé! Hủ tiếu ngon quá!");
 
-            // Trigger eating animation if available
             if (animator != null)
             {
                 foreach (var param in animator.parameters)
@@ -124,7 +238,6 @@ public class NpcCustomer : MonoBehaviour
                 }
             }
 
-            // Start countdown to leave
             isWaitingToLeave = true;
             leaveTimer = waitTimeBeforeLeaving;
 
@@ -133,50 +246,61 @@ public class NpcCustomer : MonoBehaviour
         return false;
     }
 
-    /// <summary>NPC stands up and walks away after finishing their food.</summary>
+    void UpdateEating()
+    {
+        if (!isWaitingToLeave) return;
+
+        leaveTimer -= Time.deltaTime;
+        if (leaveTimer <= 0f)
+        {
+            isWaitingToLeave = false;
+            StandUpAndLeave();
+        }
+    }
+
     void StandUpAndLeave()
     {
-        isSitting = false;
         hasReceivedItem = false;
         isWaitingToLeave = false;
 
-        // Play standing animation
         if (animator != null)
         {
-            foreach (var param in animator.parameters)
-            {
-                if (param.name == "IsSitting" && param.type == AnimatorControllerParameterType.Bool)
-                    animator.SetBool("IsSitting", false);
-                if (param.name == "IsEating" && param.type == AnimatorControllerParameterType.Bool)
-                    animator.SetBool("IsEating", false);
-            }
+            animator.SetBool("IsSitting", false);
+            animator.SetBool("IsEating", false);
             animator.Play(standingStateName, 0, 0f);
         }
 
-        // Re-enable patrol with leave waypoints
-        var navAgent = GetComponentInParent<NavMeshAgent>();
-        if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
-        if (navAgent != null)
+        if (assignedTable != null)
         {
-            navAgent.isStopped = false;
-        }
-
-        if (leaveWaypoints != null && leaveWaypoints.Length > 0)
-        {
-            var patrol = GetComponent<NPCPatrol>();
-            if (patrol != null)
+            assignedTable.enabled = false;
+            assignedTable.linkedNpc = null;
+            
+            if (RestaurantManager.Instance != null)
             {
-                patrol.SetNewWaypoints(leaveWaypoints);
-                patrol.enabled = true;
-                Debug.Log("[NpcCustomer] NPC is leaving the table.");
+                RestaurantManager.Instance.ReleaseTable(assignedTable);
             }
+            assignedTable = null;
         }
 
-        // Disable the table again since no one is sitting
-        if (linkedTable != null)
+        SwitchState(NpcState.Leaving);
+    }
+
+    void UpdateLeaving()
+    {
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            linkedTable.enabled = false;
-            Debug.Log("[NpcCustomer] Table delivery disabled (NPC left).");
+            Destroy(gameObject);
         }
+    }
+
+    public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
+    {
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+        randDirection += origin;
+
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+
+        return navHit.position;
     }
 }
