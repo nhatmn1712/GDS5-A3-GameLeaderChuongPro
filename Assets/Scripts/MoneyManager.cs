@@ -28,6 +28,8 @@ public class MoneyManager : MonoBehaviour
 
     void Start()
     {
+        // Load saved money when the game starts
+        playerMoney = PlayerPrefs.GetInt("SavedMoney", 0);
         UpdateUI();
     }
 
@@ -41,6 +43,11 @@ public class MoneyManager : MonoBehaviour
         }
 
         Instance.playerMoney += amount;
+        
+        // Save the new money amount immediately
+        PlayerPrefs.SetInt("SavedMoney", Instance.playerMoney);
+        PlayerPrefs.Save();
+
         Debug.Log($"[MoneyManager] +${amount} earned! Total: ${Instance.playerMoney}");
         Instance.UpdateUI();
     }
