@@ -14917,22 +14917,32 @@ MonoBehaviour:
   phoneRingingAudio: {fileID: 0}
   phonePromptUI: {fileID: 432833836}
   parentConversation:
-  - speakerName: "B\u1ED1"
+  - speakerName: Dad
     speakerPortrait: {fileID: 1684810904, guid: 6624f76164a3b3a4db520ff3367a7bd6, type: 3}
-    dialogueText: "Con \u01A1i, c\xF3 nh\xE0 kh\xF4ng \u0111\xF3? \u0102n u\u1ED1ng
-      \u0111\u1EA7y \u0111\u1EE7 ch\u01B0a con?"
-  - speakerName: "B\u1EA1n"
-    speakerPortrait: {fileID: 0}
-    dialogueText: "D\u1EA1 con nghe n\xE8 m\u1EB9. Con v\u1EABn kh\u1ECFe, \u0111ang
-      b\xE1n h\u1EE7 ti\u1EBFu t\u1ED1i nay."
-  - speakerName: "M\u1EB9"
-    speakerPortrait: {fileID: 0}
-    dialogueText: "R\xE1ng lo \u0103n u\u1ED1ng \u0111\xE0ng ho\xE0ng nh\xE9 con.
-      M\u1EB9 v\u1EDBi ba nh\u1EDB con l\u1EAFm."
-  - speakerName: "B\u1EA1n"
+    dialogueText: Son, are you there ? Have you eaten anything today?
+  - speakerName: Player
     speakerPortrait: {fileID: 21300000, guid: 0f1b1be1eb7ae2d42a801136b59cc444, type: 3}
-    dialogueText: "D\u1EA1, con c\u0169ng nh\u1EDB ba m\u1EB9. Con s\u1EBD v\u1EC1
-      th\u0103m ba m\u1EB9 s\u1EDBm th\xF4i \u1EA1."
+    dialogueText: I'm here, Dad. Don't worry about me. I ate already, and work is
+      going okay.
+  - speakerName: Dad
+    speakerPortrait: {fileID: 1684810904, guid: 6624f76164a3b3a4db520ff3367a7bd6, type: 3}
+    dialogueText: You always say that so we won't worry. But I know you're working
+      hard far from home. Your mother and I are proud of you.
+  - speakerName: Player
+    speakerPortrait: {fileID: 21300000, guid: 0f1b1be1eb7ae2d42a801136b59cc444, type: 3}
+    dialogueText: I miss you both every day. I'm doing this so our family can have
+      a better life. Please take care of your health.
+  - speakerName: Dad
+    speakerPortrait: {fileID: 1684810904, guid: 6624f76164a3b3a4db520ff3367a7bd6, type: 3}
+    dialogueText: We will be okay. Just promise me you will take care of yourself
+      tooBy the way mom wants to speak to you.
+  - speakerName: Mom
+    speakerPortrait: {fileID: 0}
+    dialogueText: Hey honey, are you home? Have you been eating properly ?
+  - speakerName: Player
+    speakerPortrait: {fileID: 21300000, guid: 0f1b1be1eb7ae2d42a801136b59cc444, type: 3}
+    dialogueText: Yes, Mom, I can hear you. I'm doing fine. I'm selling noodles tonight.
+      I will try to get home as soon as I can but now I got to go love you mom.
   timeToRing: 19
   shakeAmount: 0.015
   shakeSpeed: 30

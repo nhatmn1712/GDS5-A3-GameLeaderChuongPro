@@ -31,6 +31,12 @@ public class TableDelivery : MonoBehaviour
     private bool playerInRange = false;
     private PlayerInteract currentPlayer = null;
 
+    void Start()
+    {
+        // Ensure the table starts disabled so the player cannot place food before an NPC sits down.
+        this.enabled = false;
+    }
+
     void OnEnable()
     {
         // Reset state every time this table becomes active (new customer arrives)
