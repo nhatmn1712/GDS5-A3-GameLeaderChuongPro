@@ -58,6 +58,13 @@ public class PhoneEventController : MonoBehaviour
 
     private void Start()
     {
+        // Check if event was already completed in a previous save
+        if (PlayerPrefs.GetInt("PhoneEventCompleted", 0) == 1)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         originalLocalPos = transform.localPosition;
         
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -94,9 +101,6 @@ public class PhoneEventController : MonoBehaviour
                     phonePromptUI.Hide();
             }
         }
-
-        if (dayNightCycle.timeOfDay < 5f && hasRungToday)
-            hasRungToday = false;
 
         if (!hasRungToday && dayNightCycle.timeOfDay >= timeToRing)
             StartRinging();
@@ -139,9 +143,34 @@ public class PhoneEventController : MonoBehaviour
             phonePromptUI.Hide();
 
         if (DialogueManager.Instance != null && parentConversation != null && parentConversation.Length > 0)
+        {
             DialogueManager.Instance.StartDialogue(parentConversation);
+            StartCoroutine(WaitForDialogueAndHide());
+        }
         else
+        {
             Debug.LogWarning("[PhoneEventController] DialogueManager không tìm thấy hoặc parentConversation chưa được gán!");
+            PlayerPrefs.SetInt("PhoneEventCompleted", 1);
+            PlayerPrefs.Save();
+            gameObject.SetActive(false);
+        }
+    }
+
+    private IEnumerator WaitForDialogueAndHide()
+    {
+        // Wait briefly to ensure the dialogue manager has time to start
+        yield return new WaitForSeconds(0.5f);
+
+        // Wait until the player finishes the conversation
+        while (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive)
+        {
+            yield return null;
+        }
+
+        // Save progress so it never rings again, then make the phone disappear
+        PlayerPrefs.SetInt("PhoneEventCompleted", 1);
+        PlayerPrefs.Save();
+        gameObject.SetActive(false);
     }
 
     private void ShakePhone()
