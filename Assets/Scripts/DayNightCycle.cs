@@ -22,10 +22,20 @@ public class DayNightCycle : MonoBehaviour
     [Tooltip("Controls the brightness of the sun over the 24 hours.")]
     public AnimationCurve sunIntensity;
 
+    [Header("Skybox Settings")]
+    public Material morningSkybox;   // 06:00 to 12:00
+    public Material noonSkybox;      // 12:00 to 16:00
+    public Material afternoonSkybox; // 16:00 to 18:00
+    public Material eveningSkybox;   // 18:00 to 20:00
+    public Material nightSkybox;     // 20:00 to 06:00
+
     private float timeMultiplier;
 
     void Start()
     {
+        // Ensure fog is turned off completely
+        RenderSettings.fog = false;
+
         // Calculate how much the timeOfDay should increase per real-time second
         timeMultiplier = 24f / (dayDurationInMinutes * 60f);
     }
@@ -64,5 +74,26 @@ public class DayNightCycle : MonoBehaviour
         // Update Sun Color and Intensity using the Gradient and AnimationCurve
         sunLight.color = sunColor.Evaluate(timePercent);
         sunLight.intensity = sunIntensity.Evaluate(timePercent);
+
+        // Update Skybox smoothly based on time
+        Material targetSkybox = null;
+
+        if (timeOfDay >= 6f && timeOfDay < 12f)
+            targetSkybox = morningSkybox;
+        else if (timeOfDay >= 12f && timeOfDay < 16f)
+            targetSkybox = noonSkybox;
+        else if (timeOfDay >= 16f && timeOfDay < 18f)
+            targetSkybox = afternoonSkybox;
+        else if (timeOfDay >= 18f && timeOfDay < 20f)
+            targetSkybox = eveningSkybox;
+        else
+            targetSkybox = nightSkybox;
+
+        // Only change the skybox if we have one assigned and it's different from the current one
+        if (targetSkybox != null && RenderSettings.skybox != targetSkybox)
+        {
+            RenderSettings.skybox = targetSkybox;
+            DynamicGI.UpdateEnvironment(); // Update the scene lighting
+        }
     }
 }
