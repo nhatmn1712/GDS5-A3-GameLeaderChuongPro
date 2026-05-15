@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: 
+  itemName: Bun Bo Stock
 --- !u!1001 &92892342
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -338,7 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: 
+  itemName: Hu Tieu Stock
 --- !u!1001 &169714817
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -627,6 +627,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
   itemName: Pork
+--- !u!1 &475078653 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: 999890fe81a419548984429bb49d0626, type: 3}
+  m_PrefabInstance: {fileID: 1652189304}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &475078658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475078653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
+  itemName: Bun Bo
 --- !u!1001 &503354973
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,7 +722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: 
+  itemName: Bun (Noodle)
 --- !u!1 &520462313 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: f38cd03f435101b4e858bf7cab0fa461, type: 3}
@@ -758,7 +776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: Eggs
+  itemName: Quail egg
 --- !u!1001 &958064068
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -950,7 +968,7 @@ Transform:
   m_GameObject: {fileID: 961739749}
   serializedVersion: 2
   m_LocalRotation: {x: 0.51471865, y: -0.5040849, z: 0.48524427, w: 0.49548063}
-  m_LocalPosition: {x: -18.2, y: 93.1, z: 20.6}
+  m_LocalPosition: {x: -17.9, y: 108.4, z: 36.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1319,7 +1337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: 
+  itemName: Hu Tieu
 --- !u!1001 &1264540500
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1581,6 +1599,82 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 92838980}
   m_SourcePrefab: {fileID: 100100000, guid: 528672ecfe483714a981567a92bea328, type: 3}
+--- !u!1001 &1652189304
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 40.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d3f3a7ddd0122e840a630bd6f5662df8, type: 2}
+    - target: {fileID: 919132149155446097, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      propertyPath: m_Name
+      value: Bun BoBowl
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8164078558771037576, guid: 999890fe81a419548984429bb49d0626, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 475078658}
+  m_SourcePrefab: {fileID: 100100000, guid: 999890fe81a419548984429bb49d0626, type: 3}
 --- !u!1 &1668872239
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,7 +1985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: 
+  itemName: Hu Tieu (Noodle)
 --- !u!1 &2053171445 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: c25445bdc66619744b6a66d38141c8eb, type: 3}
@@ -1933,3 +2027,4 @@ SceneRoots:
   - {fileID: 1198995294}
   - {fileID: 1993800199}
   - {fileID: 1133396930}
+  - {fileID: 1652189304}
