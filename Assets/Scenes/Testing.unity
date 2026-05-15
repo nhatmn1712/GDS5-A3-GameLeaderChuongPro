@@ -21601,7 +21601,7 @@ MonoBehaviour:
   bikeCamera: {fileID: 208573753}
   interactUI: {fileID: 2004827609}
   interactKey: 102
-  interactDistance: 3.5
+  interactDistance: 4
 --- !u!143 &1015493527
 CharacterController:
   m_ObjectHideFlags: 0
@@ -21620,13 +21620,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.2
+  m_Height: 1.6
   m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.2, z: 0}
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!4 &1020445658 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cc19f279f00cb544d8d1de8c33faef03, type: 3}
@@ -34190,50 +34190,6 @@ MonoBehaviour:
   afternoonSkybox: {fileID: 2100000, guid: e2341a9d03e86ec4290c72b1e22bbc7c, type: 2}
   eveningSkybox: {fileID: 2100000, guid: d4454f71d85928744be7771e2143dab7, type: 2}
   nightSkybox: {fileID: 2100000, guid: f531e09e2ad2fb440b4eed7605863143, type: 2}
-  enableDynamicFog: 1
-  fogColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
-  fogDensityCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.0006492012
-      value: 0.003716242
-      inSlope: 0.17630719
-      outSlope: 0.17630719
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.14984605
-      value: 0.030020718
-      inSlope: -0.6266644
-      outSlope: -0.6266644
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.1707435
-      value: 0.0001449734
-      inSlope: -0.71422786
-      outSlope: -0.71422786
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1.0013733
-      value: 0.0011253357
-      inSlope: 0.0011802638
-      outSlope: 0.0011802638
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &1597162406
 GameObject:
   m_ObjectHideFlags: 0
