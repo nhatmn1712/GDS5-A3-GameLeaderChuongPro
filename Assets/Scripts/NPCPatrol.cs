@@ -9,7 +9,7 @@ public class NPCPatrol : MonoBehaviour
     public Transform[] waypoints;
     [Tooltip("How long the NPC waits before moving to the next waypoint.")]
     public float waitTimeAtWaypoint = 2f;
-    [Tooltip("If true, the NPC loops forever. If false, it stops at the last waypoint and calls SitDown() on NpcCustomer.")]
+    [Tooltip("If true, the NPC loops forever. If false, it stops at the last waypoint and calls WaitAtPickupSpot() on NpcCustomer.")]
     public bool loopPatrol = true;
 
     [Header("Animation")]
@@ -75,7 +75,7 @@ public class NPCPatrol : MonoBehaviour
                     if (customer == null) customer = GetComponentInChildren<NpcCustomer>();
                     if (customer != null)
                     {
-                        customer.SitDown();
+                        customer.WaitAtPickupSpot();
                     }
                     return;
                 }

@@ -34,6 +34,10 @@ public class NpcCustomer : MonoBehaviour
     public float wanderRadius = 10f;
     public float wanderCheckInterval = 5f;
 
+    [Header("Rotation Settings")]
+    [Tooltip("How fast the NPC turns to face its walk direction. Raise if it still moonwalks.")]
+    public float rotationSpeed = 10f;
+
     [Header("Head Lock (Fix Rotation Bug)")]
     [Tooltip("Kéo bone 'mixamorig:Head' từ hierarchy NPC vào đây để khóa đầu khi ngồi")]
     public Transform headBone;
@@ -97,10 +101,23 @@ public class NpcCustomer : MonoBehaviour
     {
         if (animator != null && agent != null)
         {
-            animator.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
+            bool isMoving = agent.velocity.magnitude > 0.1f;
+            animator.SetBool("IsMoving", isMoving);
+
+            // Rotate to face movement direction - fixes the "moonwalk" bug
+            if (isMoving && currentState != NpcState.Eating)
+            {
+                Vector3 moveDir = agent.velocity;
+                moveDir.y = 0f;
+                if (moveDir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(moveDir.normalized);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
+                }
+            }
         }
 
-        // Lock root rotation khi đang ngồi ăn
+        // Lock root rotation when sitting
         if (currentState == NpcState.Eating)
         {
             transform.rotation = sittingRotation;
@@ -143,7 +160,7 @@ public class NpcCustomer : MonoBehaviour
                 }
                 break;
             case NpcState.Eating:
-                SitDown();
+                WaitAtPickupSpot(); // Stand idle at pickup spot (no sitting)
                 break;
             case NpcState.Leaving:
                 agent.isStopped = false;
@@ -223,39 +240,28 @@ public class NpcCustomer : MonoBehaviour
     {
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            SwitchState(NpcState.Eating);
+            SwitchState(NpcState.Eating); // "Eating" state = standing and waiting for takeaway pickup
         }
     }
 
-    public void SitDown()
+    // NPC arrives at the pickup spot and stands idle waiting for food
+    public void WaitAtPickupSpot()
     {
         agent.isStopped = true;
         agent.velocity = Vector3.zero;
-
-        // Tắt rotation của NavMeshAgent để tránh đầu bị xoay khi ngồi
         agent.updateRotation = false;
         agent.updatePosition = false;
 
-        // Snapshot rotation hiện tại — UpdateAnimator() sẽ enforce rotation này mỗi frame
+        // Snapshot rotation so UpdateAnimator keeps them facing the right way
         sittingRotation = transform.rotation;
 
-        // Cache head bone local rotation để LateUpdate lock lại sau khi Animator chạy
-        if (headBone != null)
-            lockedHeadLocalRotation = headBone.localRotation;
-
-        // Tắt applyRootMotion để animation Mixamo không override rotation qua root bone
         if (animator != null)
         {
             animator.applyRootMotion = false;
-            animator.SetBool("IsSitting", true);
             animator.SetBool("IsMoving", false);
-            animator.Play(sittingStateName, 0, 0f);
-        }
-
-        if (autoAdjustHeight)
-        {
-            var pos = transform.localPosition;
-            transform.localPosition = new Vector3(pos.x, sittingYOffset, pos.z);
+            // Make sure they are NOT sitting - just stand idle
+            animator.SetBool("IsSitting", false);
+            animator.Play(standingStateName, 0, 0f);
         }
 
         if (assignedTable != null)
@@ -266,48 +272,20 @@ public class NpcCustomer : MonoBehaviour
 
     public bool ReceiveItem(string itemName)
     {
-        if (!hasReceivedItem && itemName == desiredItem)
-        {
-            hasReceivedItem = true;
-            Debug.Log("[NPC] Cảm ơn nhé! Hủ tiếu ngon quá!");
-
-            if (animator != null)
-            {
-                foreach (var param in animator.parameters)
-                {
-                    if (param.name == "IsEating" && param.type == AnimatorControllerParameterType.Bool)
-                    {
-                        animator.SetBool("IsEating", true);
-                        break;
-                    }
-                }
-            }
-
-            isWaitingToLeave = true;
-            leaveTimer = waitTimeBeforeLeaving;
-
-            return true;
-        }
-        return false;
+        // This is now handled entirely by TableDelivery via WalkAway()
+        // Kept for compatibility
+        return itemName == desiredItem;
     }
 
     void UpdateEating()
     {
-        if (!isWaitingToLeave) return;
+        // NPC is standing idle at pickup spot - nothing to do, TableDelivery handles the interaction
+    }
 
-        leaveTimer -= Time.deltaTime;
-        if (leaveTimer <= 0f)
-        {
-            isWaitingToLeave = false;
-            
-            // Dừng animation ăn
-            if (animator != null) animator.SetBool("IsEating", false);
-            
-            Debug.Log("[NPC] Ăn xong, chờ tính tiền!");
-
-            // Báo cho bàn biết để hiện tô rỗng và chờ player thu tiền
-            if (assignedTable != null) assignedTable.OnNPCFinishedEating();
-        }
+    // Called by TableDelivery after the thank-you dialogue closes
+    public void WalkAway()
+    {
+        StandUpAndLeave();
     }
 
     public void StandUpAndLeave()
@@ -322,7 +300,17 @@ public class NpcCustomer : MonoBehaviour
         if (animator != null)
         {
             animator.SetBool("IsSitting", false);
-            animator.SetBool("IsEating", false);
+            
+            // Tắt IsEating một cách an toàn
+            foreach (var param in animator.parameters)
+            {
+                if (param.name == "IsEating" && param.type == AnimatorControllerParameterType.Bool)
+                {
+                    animator.SetBool("IsEating", false);
+                    break;
+                }
+            }
+            
             animator.Play(standingStateName, 0, 0f);
         }
 

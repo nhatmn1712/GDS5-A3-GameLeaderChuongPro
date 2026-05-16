@@ -10,8 +10,8 @@ public class NpcOrderInteract : MonoBehaviour
     public InteractPromptUI promptUI;
 
     [Header("Dialogue Settings")]
-    [Tooltip("Tên hiển thị của NPC trên panel (VD: Khách, Bà Hai, Chú Ba...)")]
-    public string npcDisplayName = "Khách";
+    [Tooltip("Tên hiển thị của NPC trên panel (VD: Customer, Bà Hai, Chú Ba...)")]
+    public string npcDisplayName = "Customer";
 
     [Header("Settings")]
     public string actionHint = "Nhấn F để nhận order";
@@ -19,7 +19,8 @@ public class NpcOrderInteract : MonoBehaviour
     public float detectRange = 2.5f;
 
     [HideInInspector]
-    public string orderText = ""; // Sẽ tự động tạo dựa trên món ăn
+    public string orderText = "F - Nhận Order";
+    private string dialogueText = "";
 
     private bool playerInRange = false;
     private bool isReadyToOrder = false;
@@ -40,16 +41,18 @@ public class NpcOrderInteract : MonoBehaviour
         {
             string[] availableOrders = { "HuTieu", "HuTieuKhongHanh", "BunBo", "BunBoKhongHanh" };
             customer.desiredItem = availableOrders[Random.Range(0, availableOrders.Length)];
-            orderText = GetVietnameseName(customer.desiredItem);
+            dialogueText = "I would like 1 bowl of " + GetEnglishName(customer.desiredItem) + " please!";
+            orderText = "F";
+            actionHint = "Take Order";
         }
     }
 
-    private string GetVietnameseName(string code)
+    private string GetEnglishName(string code)
     {
-        if (code == "HuTieu")           return "1 tô Hủ Tiếu (có hành)";
-        if (code == "HuTieuKhongHanh") return "1 tô Hủ Tiếu (không hành)";
-        if (code == "BunBo")            return "1 tô Bún Bò (có hành)";
-        if (code == "BunBoKhongHanh")  return "1 tô Bún Bò (không hành)";
+        if (code == "HuTieu")           return "Hu Tieu (with scallions)";
+        if (code == "HuTieuKhongHanh") return "Hu Tieu (no scallions)";
+        if (code == "BunBo")            return "Bun Bo (with scallions)";
+        if (code == "BunBoKhongHanh")  return "Bun Bo (no scallions)";
         return code;
     }
 
@@ -63,10 +66,7 @@ public class NpcOrderInteract : MonoBehaviour
 
                 if (playerInRange && promptUI != null)
                 {
-                    // Hiện panel giống xe hủ tiếu:
-                    // - Dòng trên (title): Tên NPC
-                    // - Dòng dưới (action): Món + hint nhấn phím
-                    promptUI.Show(npcDisplayName, orderText + "\n" + actionHint);
+                    promptUI.Show(orderText, actionHint);
                 }
             }
         }
@@ -78,10 +78,35 @@ public class NpcOrderInteract : MonoBehaviour
 
         if (isReadyToOrder && playerInRange)
         {
+            // Kiểm tra xem dialogue có đang chạy không để tránh spam
+            if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return;
+
             if (Input.GetKeyDown(KeyCode.F))
             {
-                ConfirmOrder();
+                TriggerOrderDialogue();
             }
+        }
+    }
+
+    void TriggerOrderDialogue()
+    {
+        isReadyToOrder = false;
+        if (promptUI != null) promptUI.Hide();
+
+        DialogueLine line = new DialogueLine();
+        line.speakerName = "Customer";
+        line.dialogueText = dialogueText;
+        line.speakerPortrait = null;
+
+        DialogueLine[] lines = { line };
+
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.StartDialogue(lines, ConfirmOrder);
+        }
+        else
+        {
+            ConfirmOrder();
         }
     }
 
@@ -112,7 +137,7 @@ public class NpcOrderInteract : MonoBehaviour
             playerInRange = true;
             if (isReadyToOrder && promptUI != null)
             {
-                promptUI.Show(npcDisplayName, orderText + "\n" + actionHint);
+                promptUI.Show(orderText, actionHint);
             }
         }
     }

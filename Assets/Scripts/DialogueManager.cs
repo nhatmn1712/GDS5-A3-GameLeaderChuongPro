@@ -33,6 +33,8 @@ public class DialogueManager : MonoBehaviour
     // Track if dialogue is currently active to block other player actions if needed
     public bool isDialogueActive { get; private set; }
 
+    private System.Action onDialogueEndCallback;
+
     private void Awake()
     {
         if (Instance == null)
@@ -76,8 +78,9 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(DialogueLine[] lines)
+    public void StartDialogue(DialogueLine[] lines, System.Action onEnd = null)
     {
+        onDialogueEndCallback = onEnd;
         isDialogueActive = true;
         dialogueLines.Clear();
 
@@ -165,5 +168,9 @@ public class DialogueManager : MonoBehaviour
             dialogueCanvasGroup.interactable = false;
             dialogueCanvasGroup.blocksRaycasts = false;
         }
+
+        // Trigger callback if one was provided
+        onDialogueEndCallback?.Invoke();
+        onDialogueEndCallback = null;
     }
 }
