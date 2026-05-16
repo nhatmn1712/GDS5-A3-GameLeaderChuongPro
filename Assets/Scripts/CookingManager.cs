@@ -49,6 +49,29 @@ public class CookingManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        // 1. Tự động xóa EventSystem bị trùng (sửa lỗi không click được khi dùng Additive Load)
+        UnityEngine.EventSystems.EventSystem[] eventSystems = FindObjectsOfType<UnityEngine.EventSystems.EventSystem>();
+        if (eventSystems.Length > 1)
+        {
+            foreach (var es in eventSystems)
+            {
+                if (es.gameObject.scene == this.gameObject.scene)
+                {
+                    Destroy(es.gameObject);
+                }
+            }
+        }
+
+        // 2. Đảm bảo CookingCamera được bật, là MainCamera để click hoạt động, và xóa AudioListener bị trùng
+        CookingCamera[] cams = Resources.FindObjectsOfTypeAll<CookingCamera>();
+        if (cams.Length > 0 && cams[0] != null)
+        {
+            cams[0].gameObject.SetActive(true);
+            cams[0].gameObject.tag = "MainCamera"; // Rất quan trọng: OnMouseDown cần có MainCamera!
+            AudioListener al = cams[0].GetComponent<AudioListener>();
+            if (al != null) Destroy(al);
+        }
     }
 
     void Start()
@@ -80,10 +103,18 @@ public class CookingManager : MonoBehaviour
 
         if (isBowlCompleted)
         {
-            // TODO: Phần này sẽ dùng để giao cho NPC sau này
-            Debug.Log("Giao tô cho khách!");
-            ShowError("Đã giao món ăn!"); // Tạm thời hiện thông báo
-            ResetCookingStation(); 
+            // Pick up the completed bowl
+            PlayerInventory.carryingBowl = completedRecipeName;
+            
+            // Tìm FoodCartInteract trong scene chính để spawn prefab cho player cầm
+            FoodCartInteract cart = FindObjectOfType<FoodCartInteract>();
+            if (cart != null)
+            {
+                cart.SpawnBowlForPlayer(completedRecipeName);
+            }
+
+            // Tắt scene nấu ăn
+            UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("MiniGameHuTieu");
         }
         else
         {

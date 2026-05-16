@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5839880814072369313
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -36
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 51.6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_Name
+      value: BowlBunBo
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.9
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2699092741681021261, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7387087006219572200}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5056924045762423641}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4371877699064845236}
+  m_SourcePrefab: {fileID: 100100000, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+--- !u!1 &6758220208766856688 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 755d5820b0481b54fa968c864de5db0c, type: 3}
+  m_PrefabInstance: {fileID: 5839880814072369313}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &7387087006219572200
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6758220208766856688}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9.691669, y: 4.740036, z: 10.337635}
+  m_Center: {x: 0.6348438, y: 1.870018, z: 3.0368748}
+--- !u!114 &5056924045762423641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6758220208766856688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
+  itemName: Yellow Bowl
+--- !u!114 &4371877699064845236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6758220208766856688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4252dd028fbf90543b4062f89f216b54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CookingIngredient
+  interactType: 0
+  bowlTypeToSpawn: 2
+  ingredientName: 

@@ -11655,7 +11655,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cca5ed2f2e034a4098300ddbfa373c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FoodCartInteract
-  noodleBowlPrefab: {fileID: 2248526687212686481, guid: 3a6c1e2ff125d60499d78ebc7ff0a4db, type: 3}
+  huTieuPrefab: {fileID: 9093040600094137899, guid: bde475b7e38023545b2b86826e83d7ed, type: 3}
+  huTieuKhongHanhPrefab: {fileID: 8394221536886121894, guid: ed6a5f50f8518c047ba5c5330594b607, type: 3}
+  bunBoPrefab: {fileID: 2425155368546840866, guid: 0481ecbb37b9257469bac61d69c2539e, type: 3}
+  bunBoKhongHanhPrefab: {fileID: 8394221536886121894, guid: ed6a5f50f8518c047ba5c5330594b607, type: 3}
   cartName: "Xe H\u1EE7 Ti\u1EBFu"
   actionHint: "HOLD E to take H\u1EE7 ti\u1EBFu PRESS E to serve H\u1EE7 ti\u1EBFu
     at the table "
@@ -12837,7 +12840,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: b7e373a9f5651d64bb3643f31f2afc3f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -24984,12 +24987,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb1c629e69c60b44da35bb731596f8bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TableDelivery
+  currentState: 0
   deliverKey: 101
-  requiredItemName: HuTieu
+  tableScale: {x: 0.1, y: 0.1, z: 0.1}
+  huTieuFull: {fileID: 9093040600094137899, guid: bde475b7e38023545b2b86826e83d7ed, type: 3}
+  huTieuKhongHanhFull: {fileID: 8394221536886121894, guid: ed6a5f50f8518c047ba5c5330594b607, type: 3}
+  bunBoFull: {fileID: 2425155368546840866, guid: 0481ecbb37b9257469bac61d69c2539e, type: 3}
+  bunBoKhongHanhFull: {fileID: 8790087424196495137, guid: 02bf17ea96a255f4d8800b3a363c5573, type: 3}
+  emptyWhiteBowl: {fileID: 8521182526057235973, guid: b1fa6c204f0015b4a82108ad10210b60, type: 3}
+  emptyYellowBowl: {fileID: 6758220208766856688, guid: 2664debdbf7b2914f820a95add8ffb0f, type: 3}
   bowlPlacePoint: {fileID: 1000514484}
-  placedBowlPrefab: {fileID: 2248526687212686481, guid: 3a6c1e2ff125d60499d78ebc7ff0a4db, type: 3}
-  bowlRemoveDelay: 5
-  promptUI: {fileID: 0}
+  promptUI: {fileID: 615979223}
   chairWaypoint: {fileID: 1318531813}
   linkedNpc: {fileID: 0}
 --- !u!65 &1199108214
@@ -29691,12 +29699,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb1c629e69c60b44da35bb731596f8bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TableDelivery
+  currentState: 0
   deliverKey: 101
-  requiredItemName: HuTieu
+  tableScale: {x: 0.1, y: 0.1, z: 0.1}
+  huTieuFull: {fileID: 9093040600094137899, guid: bde475b7e38023545b2b86826e83d7ed, type: 3}
+  huTieuKhongHanhFull: {fileID: 8394221536886121894, guid: ed6a5f50f8518c047ba5c5330594b607, type: 3}
+  bunBoFull: {fileID: 2425155368546840866, guid: 0481ecbb37b9257469bac61d69c2539e, type: 3}
+  bunBoKhongHanhFull: {fileID: 8790087424196495137, guid: 02bf17ea96a255f4d8800b3a363c5573, type: 3}
+  emptyWhiteBowl: {fileID: 8521182526057235973, guid: b1fa6c204f0015b4a82108ad10210b60, type: 3}
+  emptyYellowBowl: {fileID: 6758220208766856688, guid: 2664debdbf7b2914f820a95add8ffb0f, type: 3}
   bowlPlacePoint: {fileID: 762572662}
-  placedBowlPrefab: {fileID: 2248526687212686481, guid: 3a6c1e2ff125d60499d78ebc7ff0a4db, type: 3}
-  bowlRemoveDelay: 5
-  promptUI: {fileID: 0}
+  promptUI: {fileID: 615979223}
   chairWaypoint: {fileID: 744782498}
   linkedNpc: {fileID: 0}
 --- !u!4 &1381472563
@@ -34883,12 +34896,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb1c629e69c60b44da35bb731596f8bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TableDelivery
+  currentState: 0
   deliverKey: 101
-  requiredItemName: HuTieu
+  tableScale: {x: 0.1, y: 0.1, z: 0.1}
+  huTieuFull: {fileID: 9093040600094137899, guid: bde475b7e38023545b2b86826e83d7ed, type: 3}
+  huTieuKhongHanhFull: {fileID: 8394221536886121894, guid: ed6a5f50f8518c047ba5c5330594b607, type: 3}
+  bunBoFull: {fileID: 2425155368546840866, guid: 0481ecbb37b9257469bac61d69c2539e, type: 3}
+  bunBoKhongHanhFull: {fileID: 8790087424196495137, guid: 02bf17ea96a255f4d8800b3a363c5573, type: 3}
+  emptyWhiteBowl: {fileID: 8521182526057235973, guid: b1fa6c204f0015b4a82108ad10210b60, type: 3}
+  emptyYellowBowl: {fileID: 6758220208766856688, guid: 2664debdbf7b2914f820a95add8ffb0f, type: 3}
   bowlPlacePoint: {fileID: 1030984396}
-  placedBowlPrefab: {fileID: 2248526687212686481, guid: 3a6c1e2ff125d60499d78ebc7ff0a4db, type: 3}
-  bowlRemoveDelay: 5
-  promptUI: {fileID: 0}
+  promptUI: {fileID: 615979223}
   chairWaypoint: {fileID: 100454257}
   linkedNpc: {fileID: 0}
 --- !u!4 &1617811984
@@ -41530,12 +41548,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb1c629e69c60b44da35bb731596f8bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TableDelivery
+  currentState: 0
   deliverKey: 101
-  requiredItemName: HuTieu
+  tableScale: {x: 0.1, y: 0.1, z: 0.1}
+  huTieuFull: {fileID: 9093040600094137899, guid: bde475b7e38023545b2b86826e83d7ed, type: 3}
+  huTieuKhongHanhFull: {fileID: 8394221536886121894, guid: ed6a5f50f8518c047ba5c5330594b607, type: 3}
+  bunBoFull: {fileID: 2425155368546840866, guid: 0481ecbb37b9257469bac61d69c2539e, type: 3}
+  bunBoKhongHanhFull: {fileID: 8790087424196495137, guid: 02bf17ea96a255f4d8800b3a363c5573, type: 3}
+  emptyWhiteBowl: {fileID: 8521182526057235973, guid: b1fa6c204f0015b4a82108ad10210b60, type: 3}
+  emptyYellowBowl: {fileID: 6758220208766856688, guid: 2664debdbf7b2914f820a95add8ffb0f, type: 3}
   bowlPlacePoint: {fileID: 102819535}
-  placedBowlPrefab: {fileID: 2248526687212686481, guid: 3a6c1e2ff125d60499d78ebc7ff0a4db, type: 3}
-  bowlRemoveDelay: 5
-  promptUI: {fileID: 0}
+  promptUI: {fileID: 615979223}
   chairWaypoint: {fileID: 1770983742}
   linkedNpc: {fileID: 0}
 --- !u!4 &1867711545
@@ -47717,6 +47740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteract
   holdPoint: {fileID: 2042757682}
+  holdScale: {x: 0.1, y: 0.1, z: 0.1}
   interactRange: 3
   interactKey: 101
 --- !u!1 &2128945054

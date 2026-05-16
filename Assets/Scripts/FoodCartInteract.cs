@@ -7,10 +7,14 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class FoodCartInteract : MonoBehaviour
 {
-    [Header("Item Settings")]
-    public GameObject noodleBowlPrefab;      // Kéo Prefab Tô Hủ Tiếu vào đây
+    [Header("Bowl Prefabs")]
+    public GameObject huTieuPrefab;
+    public GameObject huTieuKhongHanhPrefab;
+    public GameObject bunBoPrefab;
+    public GameObject bunBoKhongHanhPrefab;
+
     public string cartName = "Xe Hủ Tiếu";
-    public string actionHint = "Giữ E để lấy hủ tiếu";
+    public string actionHint = "Giữ E để nấu ăn";
 
     [Header("Interaction Settings")]
     public float holdDuration = 1.5f;        // Thời gian giữ E để lấy (giây)
@@ -44,6 +48,22 @@ public class FoodCartInteract : MonoBehaviour
     void Update()
     {
         if (!playerInRange) return;
+
+        // Nếu chưa có khách gọi món thì hiện thông báo và không cho tương tác
+        if (!PlayerInventory.hasActiveOrder)
+        {
+            if (promptUI != null) promptUI.Show(cartName, "Chưa có khách gọi món!");
+            if (isHolding)
+            {
+                isHolding = false;
+                holdTimer = 0f;
+                if (promptUI != null) promptUI.SetProgress(0f);
+            }
+            return;
+        }
+
+        // Nếu có khách, đảm bảo hiện đúng hướng dẫn
+        if (promptUI != null && !isHolding) promptUI.Show(cartName, actionHint);
 
         bool ePressed = Input.GetKey(interactKey);
 
@@ -86,17 +106,60 @@ public class FoodCartInteract : MonoBehaviour
         isHolding = false;
         if (promptUI != null) promptUI.SetProgress(0f);
 
-        if (playerInteract != null && noodleBowlPrefab != null)
+        // Load scene nấu ăn chồng lên
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MiniGameHuTieu", UnityEngine.SceneManagement.LoadSceneMode.Additive);
+
+        // Ẩn Camera chính của người chơi đi để nhường chỗ cho Camera nấu ăn
+        if (Camera.main != null) 
         {
-            // Spawn tô hủ tiếu và giao cho player
-            GameObject newBowl = Instantiate(noodleBowlPrefab);
+            Camera.main.gameObject.SetActive(false);
+        }
+
+        // Khóa player
+        if (playerInteract != null)
+        {
+            PlayerMovement pm = playerInteract.GetComponent<PlayerMovement>();
+            if (pm != null) pm.enabled = false;
+        }
+
+        // Hiện chuột để nấu ăn
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void SpawnBowlForPlayer(string recipeName)
+    {
+        if (playerInteract == null) return;
+
+        GameObject prefabToSpawn = null;
+        if (recipeName == "HuTieu") prefabToSpawn = huTieuPrefab;
+        else if (recipeName == "HuTieuKhongHanh") prefabToSpawn = huTieuKhongHanhPrefab;
+        else if (recipeName == "BunBo") prefabToSpawn = bunBoPrefab;
+        else if (recipeName == "BunBoKhongHanh") prefabToSpawn = bunBoKhongHanhPrefab;
+
+        if (prefabToSpawn != null)
+        {
+            GameObject newBowl = Instantiate(prefabToSpawn);
             playerInteract.ForcePickUp(newBowl);
-            Debug.Log("[FoodCart] Đã lấy tô hủ tiếu thành công!");
         }
-        else
+
+        // Bật lại Camera chính của người chơi
+        Camera[] cameras = Resources.FindObjectsOfTypeAll<Camera>();
+        foreach (Camera cam in cameras)
         {
-            Debug.LogWarning("[FoodCart] Chưa gán Prefab tô hủ tiếu hoặc PlayerInteract!");
+            if (cam.name == "Main Camera")
+            {
+                cam.gameObject.SetActive(true);
+            }
         }
+
+        // Mở khóa player
+        PlayerMovement pm = playerInteract.GetComponent<PlayerMovement>();
+        if (pm != null) pm.enabled = true;
+
+        // Ẩn chuột lại
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void OnTriggerEnter(Collider other)
@@ -111,7 +174,12 @@ public class FoodCartInteract : MonoBehaviour
             playerInteract = pi;
 
             if (promptUI != null)
-                promptUI.Show(cartName, actionHint);
+            {
+                if (PlayerInventory.hasActiveOrder)
+                    promptUI.Show(cartName, actionHint);
+                else
+                    promptUI.Show(cartName, "Chưa có khách gọi món!");
+            }
         }
     }
 

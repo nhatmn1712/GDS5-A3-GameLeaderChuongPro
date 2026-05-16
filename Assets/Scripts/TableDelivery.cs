@@ -1,140 +1,215 @@
 using UnityEngine;
 
-/// <summary>
-/// Attach to an Empty GameObject at the table position.
-/// Starts DISABLED - NpcCustomer.SitDown() will enable it when a customer arrives.
-/// Uses OnTriggerStay so it works with the Box Collider.
-/// </summary>
 [RequireComponent(typeof(Collider))]
 public class TableDelivery : MonoBehaviour
 {
+    public enum TableState { WaitingForFood, WrongFood, Eating, WaitingForPayment }
+    public TableState currentState = TableState.WaitingForFood;
+
     [Header("Settings")]
     public KeyCode deliverKey = KeyCode.E;
-    public string requiredItemName = "HuTieu";
+    [Tooltip("Điều chỉnh kích thước tô khi đặt lên bàn (chỉnh giống thông số Hold Scale của Player)")]
+    public Vector3 tableScale = new Vector3(1f, 1f, 1f);
 
-    [Header("Bowl Placement")]
-    public Transform bowlPlacePoint;        // Empty GO placed on top of the table
-    public GameObject placedBowlPrefab;     // Prefab of the bowl to show on table
-    public float bowlRemoveDelay = 5f;      // Seconds before the bowl disappears
+    [Header("Full Bowl Prefabs (When Delivered)")]
+    public GameObject huTieuFull;
+    public GameObject huTieuKhongHanhFull;
+    public GameObject bunBoFull;
+    public GameObject bunBoKhongHanhFull;
 
+    [Header("Empty Bowl Prefabs (After Eating)")]
+    public GameObject emptyWhiteBowl; // Cho Hủ Tiếu
+    public GameObject emptyYellowBowl; // Cho Bún Bò
+
+    [Header("Placement")]
+    public Transform bowlPlacePoint;        
+    
     [Header("UI (optional)")]
     public InteractPromptUI promptUI;
 
     [Header("NPC Reaction")]
-    [Tooltip("Where the NPC should sit. Drag your Waypoint 5 here.")]
     public Transform chairWaypoint;
-    public NpcCustomer linkedNpc;           // Link to the NpcCustomer sitting at this table
+    public NpcCustomer linkedNpc;           
 
-    private bool bowlDelivered = false;
     private GameObject spawnedBowl = null;
-
     private bool playerInRange = false;
     private PlayerInteract currentPlayer = null;
 
     void Start()
     {
-        // Ensure the table starts disabled so the player cannot place food before an NPC sits down.
         this.enabled = false;
     }
 
     void OnEnable()
     {
-        // Reset state every time this table becomes active (new customer arrives)
-        bowlDelivered = false;
-        spawnedBowl = null;
+        currentState = TableState.WaitingForFood;
+        ClearTable();
         playerInRange = false;
         currentPlayer = null;
 
-        if (promptUI != null)
-            promptUI.Hide();
+        InteractPromptUI activeUI = GetActivePromptUI();
+        if (activeUI != null) activeUI.Hide();
             
-        // Ensure the collider is a trigger
         Collider col = GetComponent<Collider>();
         if (col != null) col.isTrigger = true;
     }
 
     void OnDisable()
     {
-        // Clean up bowl if the NPC left before it was removed
-        if (spawnedBowl != null)
-        {
-            Destroy(spawnedBowl);
-            spawnedBowl = null;
-        }
-
-        if (promptUI != null)
-            promptUI.Hide();
-            
+        ClearTable();
+        InteractPromptUI activeUI = GetActivePromptUI();
+        if (activeUI != null) activeUI.Hide();
         playerInRange = false;
         currentPlayer = null;
     }
 
+    // Lấy UI trên đầu NPC (nếu có) để hiện thông báo cho tự nhiên
+    private InteractPromptUI GetActivePromptUI()
+    {
+        if (linkedNpc != null)
+        {
+            NpcOrderInteract npcOrder = linkedNpc.GetComponentInChildren<NpcOrderInteract>();
+            if (npcOrder != null && npcOrder.promptUI != null)
+            {
+                return npcOrder.promptUI;
+            }
+        }
+        return promptUI;
+    }
+
     void Update()
     {
-        if (bowlDelivered || !playerInRange || currentPlayer == null) return;
+        if (!playerInRange || currentPlayer == null || linkedNpc == null) return;
 
-        // Show/hide UI prompt
-        if (promptUI != null)
+        InteractPromptUI activeUI = GetActivePromptUI();
+
+        if (currentState == TableState.WaitingForFood)
         {
             if (currentPlayer.IsHoldingItem())
-                promptUI.Show("Bàn", "Nhấn E để đặt hủ tiếu");
+            {
+                if (activeUI != null) activeUI.Show("Bàn", "Nhấn E để đặt đồ ăn");
+                if (Input.GetKeyDown(deliverKey))
+                {
+                    PlaceFood();
+                }
+            }
             else
-                promptUI.Hide();
+            {
+                if (activeUI != null) activeUI.Hide();
+            }
         }
-
-        // Receive delivery input
-        if (currentPlayer.IsHoldingItem() && Input.GetKeyDown(deliverKey))
+        else if (currentState == TableState.WrongFood)
         {
-            DeliverBowl();
+            if (activeUI != null) activeUI.Show("Sai món!", "Khách không gọi món này! Nhấn F để dọn.");
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                ClearTable();
+                currentState = TableState.WaitingForFood;
+                if (activeUI != null) activeUI.Hide();
+            }
+        }
+        else if (currentState == TableState.WaitingForPayment)
+        {
+            if (activeUI != null) activeUI.Show("Tính tiền", "Nhấn F để thu tiền");
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                CollectPayment();
+            }
+        }
+        else
+        {
+            if (activeUI != null) activeUI.Hide(); // Đang ăn
         }
     }
 
-    void DeliverBowl()
+    void PlaceFood()
     {
-        // Take the item from the player
+        string deliveredItem = PlayerInventory.carryingBowl;
         currentPlayer.DropItemForDelivery();
+        PlayerInventory.carryingBowl = "";
 
-        // Spawn bowl on the table
-        if (placedBowlPrefab != null)
+        SpawnBowl(deliveredItem, false);
+
+        if (deliveredItem == linkedNpc.desiredItem)
         {
-            Vector3 placePos = bowlPlacePoint != null
-                ? bowlPlacePoint.position
-                : transform.position + Vector3.up * 0.1f;
-            spawnedBowl = Instantiate(placedBowlPrefab, placePos, Quaternion.identity);
-
-            // Schedule bowl removal
-            Invoke(nameof(RemoveBowl), bowlRemoveDelay);
+            currentState = TableState.Eating;
+            PlayerInventory.hasActiveOrder = false; // Cho phép xe nhận order mới
+            linkedNpc.ReceiveItem(deliveredItem);
+            
+            InteractPromptUI activeUI = GetActivePromptUI();
+            if (activeUI != null) activeUI.Hide();
         }
-
-        bowlDelivered = true;
-
-        // Award $1 to the player
-        MoneyManager.AddMoney(1);
-
-        // Notify NPC they received their food
-        if (linkedNpc != null)
-            linkedNpc.ReceiveItem(requiredItemName);
-
-        if (promptUI != null)
-            promptUI.Hide();
-
-        Debug.Log("[Table] Hủ tiếu đã được đặt lên bàn! Player nhận $1.");
+        else
+        {
+            currentState = TableState.WrongFood;
+        }
     }
 
-    void RemoveBowl()
+    public void OnNPCFinishedEating()
+    {
+        currentState = TableState.WaitingForPayment;
+        SpawnBowl(linkedNpc.desiredItem, true); // Đổi thành tô rỗng
+    }
+
+    void CollectPayment()
+    {
+        MoneyManager.AddMoney(1);
+        ClearTable();
+        
+        if (linkedNpc != null)
+        {
+            linkedNpc.StandUpAndLeave(); // Kêu NPC đứng dậy đi về
+        }
+        
+        currentState = TableState.WaitingForFood;
+        InteractPromptUI activeUI = GetActivePromptUI();
+        if (activeUI != null) activeUI.Hide();
+        Debug.Log("[Table] Đã thu tiền!");
+    }
+
+    void SpawnBowl(string recipeName, bool isEmpty)
+    {
+        ClearTable();
+        GameObject prefabToSpawn = null;
+
+        if (isEmpty)
+        {
+            if (recipeName.Contains("HuTieu")) prefabToSpawn = emptyWhiteBowl;
+            else if (recipeName.Contains("BunBo")) prefabToSpawn = emptyYellowBowl;
+        }
+        else
+        {
+            if (recipeName == "HuTieu") prefabToSpawn = huTieuFull;
+            else if (recipeName == "HuTieuKhongHanh") prefabToSpawn = huTieuKhongHanhFull;
+            else if (recipeName == "BunBo") prefabToSpawn = bunBoFull;
+            else if (recipeName == "BunBoKhongHanh") prefabToSpawn = bunBoKhongHanhFull;
+        }
+
+        if (prefabToSpawn != null)
+        {
+            Vector3 placePos = bowlPlacePoint != null ? bowlPlacePoint.position : transform.position + Vector3.up * 0.1f;
+            spawnedBowl = Instantiate(prefabToSpawn, placePos, Quaternion.identity);
+            
+            // Set parents to the table so it moves if the table moves, and apply scale
+            if (bowlPlacePoint != null) spawnedBowl.transform.SetParent(bowlPlacePoint);
+            else spawnedBowl.transform.SetParent(transform);
+            
+            spawnedBowl.transform.localScale = tableScale; // Áp dụng kích thước thu nhỏ
+        }
+    }
+
+    void ClearTable()
     {
         if (spawnedBowl != null)
         {
             Destroy(spawnedBowl);
             spawnedBowl = null;
-            Debug.Log("[Table] Tô hủ tiếu đã biến mất.");
         }
     }
 
-    // Use triggers so we rely on the Box Collider size instead of a single center point
     void OnTriggerStay(Collider other)
     {
-        if (bowlDelivered || !this.enabled) return;
+        if (!this.enabled) return;
 
         PlayerInteract pi = other.GetComponent<PlayerInteract>();
         if (pi == null) pi = other.GetComponentInParent<PlayerInteract>();
@@ -155,7 +230,8 @@ public class TableDelivery : MonoBehaviour
         {
             playerInRange = false;
             currentPlayer = null;
-            if (promptUI != null) promptUI.Hide();
+            InteractPromptUI activeUI = GetActivePromptUI();
+            if (activeUI != null) activeUI.Hide();
         }
     }
 }

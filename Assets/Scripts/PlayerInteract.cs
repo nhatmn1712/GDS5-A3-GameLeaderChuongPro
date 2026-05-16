@@ -9,6 +9,8 @@ public class PlayerInteract : MonoBehaviour
 {
     [Header("Hold Point")]
     public Transform holdPoint; // Điểm cầm nắm (Empty GameObject con của Camera hoặc Player)
+    [Tooltip("Điều chỉnh kích thước của vật phẩm khi cầm trên tay (giúp sửa lỗi tô khổng lồ)")]
+    public Vector3 holdScale = new Vector3(1f, 1f, 1f);
 
     [Header("NPC Delivery Settings")]
     public float interactRange = 3f;
@@ -94,12 +96,14 @@ public class PlayerInteract : MonoBehaviour
             heldItem.transform.SetParent(holdPoint);
             heldItem.transform.localPosition = Vector3.zero;
             heldItem.transform.localRotation = Quaternion.identity;
+            heldItem.transform.localScale = holdScale; // Áp dụng kích thước thu nhỏ
         }
         else
         {
             heldItem.transform.SetParent(transform);
             heldItem.transform.localPosition = new Vector3(0f, 1f, 1f);
             heldItem.transform.localRotation = Quaternion.identity;
+            heldItem.transform.localScale = holdScale; // Áp dụng kích thước thu nhỏ
         }
 
         Debug.Log("[Player] Đã nhận: " + heldItem.name);

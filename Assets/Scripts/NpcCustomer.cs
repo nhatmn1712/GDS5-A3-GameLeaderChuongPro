@@ -265,11 +265,18 @@ public class NpcCustomer : MonoBehaviour
         if (leaveTimer <= 0f)
         {
             isWaitingToLeave = false;
-            StandUpAndLeave();
+            
+            // Dừng animation ăn
+            if (animator != null) animator.SetBool("IsEating", false);
+            
+            Debug.Log("[NPC] Ăn xong, chờ tính tiền!");
+
+            // Báo cho bàn biết để hiện tô rỗng và chờ player thu tiền
+            if (assignedTable != null) assignedTable.OnNPCFinishedEating();
         }
     }
 
-    void StandUpAndLeave()
+    public void StandUpAndLeave()
     {
         hasReceivedItem = false;
         isWaitingToLeave = false;

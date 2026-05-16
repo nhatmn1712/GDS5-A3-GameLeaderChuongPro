@@ -10,10 +10,12 @@ public class NpcOrderInteract : MonoBehaviour
     public InteractPromptUI promptUI;
     
     [Header("Settings")]
-    public string orderText = "I want 1 To Hu Tieu";
-    public string actionHint = "press E to confirm order";
+    public string actionHint = "press F to confirm order";
     [Tooltip("How close the player needs to be to see the UI and interact.")]
     public float detectRange = 2.5f;
+
+    [HideInInspector]
+    public string orderText = ""; // Sẽ tự động tạo dựa trên món ăn
 
     private bool playerInRange = false;
     private bool isReadyToOrder = false;
@@ -29,6 +31,22 @@ public class NpcOrderInteract : MonoBehaviour
         
         if (customer == null) 
             customer = GetComponentInParent<NpcCustomer>();
+
+        if (customer != null)
+        {
+            string[] availableOrders = { "HuTieu", "HuTieuKhongHanh", "BunBo", "BunBoKhongHanh" };
+            customer.desiredItem = availableOrders[Random.Range(0, availableOrders.Length)];
+            orderText = "Tôi muốn " + GetVietnameseName(customer.desiredItem);
+        }
+    }
+
+    private string GetVietnameseName(string code)
+    {
+        if (code == "HuTieu") return "1 Tô Hủ Tiếu";
+        if (code == "HuTieuKhongHanh") return "1 Hủ Tiếu Không Hành";
+        if (code == "BunBo") return "1 Tô Bún Bò";
+        if (code == "BunBoKhongHanh") return "1 Bún Bò Không Hành";
+        return code;
     }
 
     void Update()
@@ -64,6 +82,9 @@ public class NpcOrderInteract : MonoBehaviour
     {
         isReadyToOrder = false;
         orderConfirmed = true;
+
+        // Lưu trạng thái là người chơi đã nhận order
+        PlayerInventory.hasActiveOrder = true;
 
         if (promptUI != null) promptUI.Hide();
         
