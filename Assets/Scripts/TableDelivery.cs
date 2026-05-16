@@ -8,8 +8,10 @@ public class TableDelivery : MonoBehaviour
 
     [Header("Settings")]
     public KeyCode deliverKey = KeyCode.E;
-    [Tooltip("Điều chỉnh kích thước tô khi đặt lên bàn (chỉnh giống thông số Hold Scale của Player)")]
+    [Tooltip("Kích thước tô đầy khi đặt lên bàn")]
     public Vector3 tableScale = new Vector3(1f, 1f, 1f);
+    [Tooltip("Kích thước tô rỗng sau khi khách ăn xong (chỉnh nhỏ hơn nếu tô rỗng bị bự)")]
+    public Vector3 emptyBowlScale = new Vector3(1f, 1f, 1f);
 
     [Header("Full Bowl Prefabs (When Delivered)")]
     public GameObject huTieuFull;
@@ -34,6 +36,7 @@ public class TableDelivery : MonoBehaviour
     private GameObject spawnedBowl = null;
     private bool playerInRange = false;
     private PlayerInteract currentPlayer = null;
+    private NpcOrderInteract cachedNpcOrder = null; // Cache để tránh GetComponent mỗi frame
 
     void Start()
     {
@@ -46,6 +49,7 @@ public class TableDelivery : MonoBehaviour
         ClearTable();
         playerInRange = false;
         currentPlayer = null;
+        cachedNpcOrder = null; // Reset cache khi bàn được enable lại
 
         InteractPromptUI activeUI = GetActivePromptUI();
         if (activeUI != null) activeUI.Hide();
@@ -100,9 +104,31 @@ public class TableDelivery : MonoBehaviour
         }
         else if (currentState == TableState.WrongFood)
         {
-            if (activeUI != null) activeUI.Show("Sai món!", "Khách không gọi món này! Nhấn F để dọn.");
+            // Lấy NpcOrderInteract từ cache (chỉ tìm 1 lần)
+            if (cachedNpcOrder == null && linkedNpc != null)
+                cachedNpcOrder = linkedNpc.GetComponentInChildren<NpcOrderInteract>();
+
+            // Hiện reminder order 1 lần khi player mới vào range
+            // (không gọi Show() mỗi frame để tránh xung đột)
+            if (cachedNpcOrder != null && cachedNpcOrder.promptUI != null)
+            {
+                // Chỉ cần đảm bảo đang hiện - InteractPromptUI tự fade
+                cachedNpcOrder.promptUI.Show(
+                    "❌ Sai món! Khách muốn:",
+                    cachedNpcOrder.orderText + "\nNhấn F để dọn và thử lại"
+                );
+            }
+            else if (activeUI != null)
+            {
+                activeUI.Show("Sai món!", "Khách không gọi món này!\nNhấn F để dọn.");
+            }
+
             if (Input.GetKeyDown(KeyCode.F))
             {
+                // Ẩn panel reminder
+                if (cachedNpcOrder != null && cachedNpcOrder.promptUI != null)
+                    cachedNpcOrder.promptUI.Hide();
+
                 ClearTable();
                 currentState = TableState.WaitingForFood;
                 if (activeUI != null) activeUI.Hide();
@@ -194,7 +220,8 @@ public class TableDelivery : MonoBehaviour
             if (bowlPlacePoint != null) spawnedBowl.transform.SetParent(bowlPlacePoint);
             else spawnedBowl.transform.SetParent(transform);
             
-            spawnedBowl.transform.localScale = tableScale; // Áp dụng kích thước thu nhỏ
+            // Tô rỗng (sau khi ăn) dùng emptyBowlScale riêng, tô đầy dùng tableScale
+            spawnedBowl.transform.localScale = isEmpty ? emptyBowlScale : tableScale;
         }
     }
 

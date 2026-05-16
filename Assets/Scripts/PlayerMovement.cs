@@ -27,6 +27,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        // Reset velocity khi được bật lại (ví dụ: sau mini-game nấu ăn)
+        // Tránh trường hợp velocity.y âm tích lũy từ trước gây "rớt xuống"
+        velocity = Vector3.zero;
+    }
+
     void Update()
     {
         MovePlayer();
@@ -75,6 +82,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         velocity.y += gravity * Time.deltaTime;
+
+        // Clamp để velocity.y không tích lũy xuống âm vô hạn (bug phổ biến của CharacterController)
+        velocity.y = Mathf.Max(velocity.y, gravity);
+
         controller.Move(velocity * Time.deltaTime);
     }
 }

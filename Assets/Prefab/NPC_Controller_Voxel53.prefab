@@ -638,6 +638,7 @@ MonoBehaviour:
   despawnPoint: {fileID: 0}
   wanderRadius: 10
   wanderCheckInterval: 5
+  headBone: {fileID: 2446903327818399472}
 --- !u!135 &8111334354820132512
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -673,9 +674,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcOrderInteract
   customer: {fileID: 0}
   promptUI: {fileID: 3491396715074851566}
-  orderText: I want 1 To Hu Tieu
+  npcDisplayName: "Kh\xE1ch"
   actionHint: press F to confirm order
   detectRange: 2.5
+  orderText: I want 1 To Hu Tieu
 --- !u!1 &3555851859439807525
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,13 +702,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3555851859439807525}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.20893049, y: 0.8945651, z: 0}
+  m_LocalRotation: {x: 0.000000007450577, y: -0.6979483, z: -0.000000022351731, w: 0.71614814}
+  m_LocalPosition: {x: -0.20893078, y: 0.89456314, z: 0.00000087171793}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2446903327818399472}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -88.525, z: 0}
 --- !u!1 &3685508311106516165
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +787,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Xe H\u1EE7 Ti\u1EBFu"
+  m_Text: 
 --- !u!1 &3864668084920650997
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,7 +930,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Hold F to take h\u1EE7 ti\u1EBFu"
+  m_Text: 
 --- !u!1 &4411294822617466391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,14 +1144,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4892760655455039205}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.031546425, y: 0.014846616, z: -0.048196983, w: 0.99822915}
-  m_LocalPosition: {x: -0.025725126, y: 0.110146046, z: 0}
+  m_LocalRotation: {x: 0.04723961, y: 0.99823016, z: -0.032962825, w: 0.0147830825}
+  m_LocalPosition: {x: -0.02572507, y: 0.11014611, z: -0.0000010072254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2559017685469199928}
   m_Father: {fileID: 7335373261990793993}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 3.854, y: 178.484, z: 5.368}
 --- !u!1 &4951368413329908377
 GameObject:
   m_ObjectHideFlags: 0
@@ -1646,6 +1648,7 @@ GameObject:
   m_Component:
   - component: {fileID: 364052740700165587}
   - component: {fileID: 2307477302349723643}
+  - component: {fileID: 1422703988421328147}
   m_Layer: 0
   m_Name: Voxel Universe-53@Breathing Idle
   m_TagString: Untagged
@@ -1692,6 +1695,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1422703988421328147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9125911381265006915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d7c11082f729446b0430592675bf98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcHeadLock
 --- !u!1 &9188730203111191499
 GameObject:
   m_ObjectHideFlags: 0

@@ -236,6 +236,7 @@ MonoBehaviour:
   despawnPoint: {fileID: 0}
   wanderRadius: 10
   wanderCheckInterval: 5
+  headBone: {fileID: 4265088043071763670}
 --- !u!135 &8947282991046654336
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -271,9 +272,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcOrderInteract
   customer: {fileID: 0}
   promptUI: {fileID: 8378510682322326390}
-  orderText: I want 1 To Hu Tieu
+  npcDisplayName: "Kh\xE1ch"
   actionHint: press F to confirm order
   detectRange: 2.5
+  orderText: I want 1 To Hu Tieu
 --- !u!1 &3345109332670769552
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,6 +806,46 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0011927919
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.08953385
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.000000024912879
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.07703834
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.045090806
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.99536276
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.035846166
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 4.491
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 171.339
+      objectReference: {fileID: 0}
+    - target: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 4.847
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 378739048fbf9954d936a8c496f85099, type: 3}
       propertyPath: m_Name
       value: NPC
@@ -827,8 +869,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6524537918742447250}
   m_SourcePrefab: {fileID: 100100000, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+--- !u!4 &4265088043071763670 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3321919801592875672, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+  m_PrefabInstance: {fileID: 7698491727748170174}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7356595501761543407 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 378739048fbf9954d936a8c496f85099, type: 3}
+  m_PrefabInstance: {fileID: 7698491727748170174}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-6524537918742447250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7356595501761543407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d7c11082f729446b0430592675bf98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcHeadLock
 --- !u!4 &7880226281928517205 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 378739048fbf9954d936a8c496f85099, type: 3}

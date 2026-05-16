@@ -6,11 +6,15 @@ public class NpcOrderInteract : MonoBehaviour
     [Header("References")]
     [Tooltip("The NpcCustomer component on this NPC (will auto-find if empty).")]
     public NpcCustomer customer;
-    [Tooltip("The UI Panel that shows the order. Drag the Canvas/Panel here.")]
+    [Tooltip("The UI Panel that shows the order (giống panel xe hủ tiếu).")]
     public InteractPromptUI promptUI;
-    
+
+    [Header("Dialogue Settings")]
+    [Tooltip("Tên hiển thị của NPC trên panel (VD: Khách, Bà Hai, Chú Ba...)")]
+    public string npcDisplayName = "Khách";
+
     [Header("Settings")]
-    public string actionHint = "press F to confirm order";
+    public string actionHint = "Nhấn F để nhận order";
     [Tooltip("How close the player needs to be to see the UI and interact.")]
     public float detectRange = 2.5f;
 
@@ -36,16 +40,16 @@ public class NpcOrderInteract : MonoBehaviour
         {
             string[] availableOrders = { "HuTieu", "HuTieuKhongHanh", "BunBo", "BunBoKhongHanh" };
             customer.desiredItem = availableOrders[Random.Range(0, availableOrders.Length)];
-            orderText = "Tôi muốn " + GetVietnameseName(customer.desiredItem);
+            orderText = GetVietnameseName(customer.desiredItem);
         }
     }
 
     private string GetVietnameseName(string code)
     {
-        if (code == "HuTieu") return "1 Tô Hủ Tiếu";
-        if (code == "HuTieuKhongHanh") return "1 Hủ Tiếu Không Hành";
-        if (code == "BunBo") return "1 Tô Bún Bò";
-        if (code == "BunBoKhongHanh") return "1 Bún Bò Không Hành";
+        if (code == "HuTieu")           return "1 tô Hủ Tiếu (có hành)";
+        if (code == "HuTieuKhongHanh") return "1 tô Hủ Tiếu (không hành)";
+        if (code == "BunBo")            return "1 tô Bún Bò (có hành)";
+        if (code == "BunBoKhongHanh")  return "1 tô Bún Bò (không hành)";
         return code;
     }
 
@@ -56,10 +60,13 @@ public class NpcOrderInteract : MonoBehaviour
             if (!isReadyToOrder && !orderConfirmed)
             {
                 isReadyToOrder = true;
-                
+
                 if (playerInRange && promptUI != null)
                 {
-                    promptUI.Show(orderText, actionHint);
+                    // Hiện panel giống xe hủ tiếu:
+                    // - Dòng trên (title): Tên NPC
+                    // - Dòng dưới (action): Món + hint nhấn phím
+                    promptUI.Show(npcDisplayName, orderText + "\n" + actionHint);
                 }
             }
         }
@@ -83,11 +90,10 @@ public class NpcOrderInteract : MonoBehaviour
         isReadyToOrder = false;
         orderConfirmed = true;
 
-        // Lưu trạng thái là người chơi đã nhận order
         PlayerInventory.hasActiveOrder = true;
 
         if (promptUI != null) promptUI.Hide();
-        
+
         Debug.Log("[NpcOrder] Order confirmed by player!");
         
         if (customer != null) 
@@ -106,7 +112,7 @@ public class NpcOrderInteract : MonoBehaviour
             playerInRange = true;
             if (isReadyToOrder && promptUI != null)
             {
-                promptUI.Show(orderText, actionHint);
+                promptUI.Show(npcDisplayName, orderText + "\n" + actionHint);
             }
         }
     }

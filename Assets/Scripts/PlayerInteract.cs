@@ -86,9 +86,9 @@ public class PlayerInteract : MonoBehaviour
         Rigidbody rb = heldItem.GetComponent<Rigidbody>();
         if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
 
-        // Tắt collider
-        Collider col = heldItem.GetComponent<Collider>();
-        if (col != null) col.enabled = false;
+        // Tắt TẤT CẢ collider (kể cả child objects) để tránh clip vào sàn khi scale lớn
+        foreach (Collider col in heldItem.GetComponentsInChildren<Collider>())
+            col.enabled = false;
 
         // Gắn vào HoldPoint
         if (holdPoint != null)
@@ -126,8 +126,9 @@ public class PlayerInteract : MonoBehaviour
         heldItem.transform.SetParent(null);
         Rigidbody rb = heldItem.GetComponent<Rigidbody>();
         if (rb != null) { rb.isKinematic = false; rb.useGravity = true; }
-        Collider col = heldItem.GetComponent<Collider>();
-        if (col != null) col.enabled = true;
+        // Bật lại TẤT CẢ collider (kể cả child objects)
+        foreach (Collider col in heldItem.GetComponentsInChildren<Collider>())
+            col.enabled = true;
         heldItem = null;
     }
 }

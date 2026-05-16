@@ -34,6 +34,11 @@ public class NpcCustomer : MonoBehaviour
     public float wanderRadius = 10f;
     public float wanderCheckInterval = 5f;
 
+    [Header("Head Lock (Fix Rotation Bug)")]
+    [Tooltip("Kéo bone 'mixamorig:Head' từ hierarchy NPC vào đây để khóa đầu khi ngồi")]
+    public Transform headBone;
+    private Quaternion lockedHeadLocalRotation;
+
     private Animator animator;
     private NavMeshAgent agent;
     private TableDelivery assignedTable;
@@ -41,6 +46,7 @@ public class NpcCustomer : MonoBehaviour
     private float wanderTimer = 0f;
     private float leaveTimer = 0f;
     private bool isWaitingToLeave = false;
+    private Quaternion sittingRotation; // Snapshot rotation khi ngồi xuống
 
     void Awake()
     {
@@ -92,6 +98,21 @@ public class NpcCustomer : MonoBehaviour
         if (animator != null && agent != null)
         {
             animator.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
+        }
+
+        // Lock root rotation khi đang ngồi ăn
+        if (currentState == NpcState.Eating)
+        {
+            transform.rotation = sittingRotation;
+        }
+    }
+
+    // LateUpdate chạy SAU khi Animator xử lý xong — override head bone trực tiếp
+    void LateUpdate()
+    {
+        if (currentState == NpcState.Eating && headBone != null)
+        {
+            headBone.localRotation = lockedHeadLocalRotation;
         }
     }
 
@@ -211,8 +232,21 @@ public class NpcCustomer : MonoBehaviour
         agent.isStopped = true;
         agent.velocity = Vector3.zero;
 
+        // Tắt rotation của NavMeshAgent để tránh đầu bị xoay khi ngồi
+        agent.updateRotation = false;
+        agent.updatePosition = false;
+
+        // Snapshot rotation hiện tại — UpdateAnimator() sẽ enforce rotation này mỗi frame
+        sittingRotation = transform.rotation;
+
+        // Cache head bone local rotation để LateUpdate lock lại sau khi Animator chạy
+        if (headBone != null)
+            lockedHeadLocalRotation = headBone.localRotation;
+
+        // Tắt applyRootMotion để animation Mixamo không override rotation qua root bone
         if (animator != null)
         {
+            animator.applyRootMotion = false;
             animator.SetBool("IsSitting", true);
             animator.SetBool("IsMoving", false);
             animator.Play(sittingStateName, 0, 0f);
@@ -280,6 +314,10 @@ public class NpcCustomer : MonoBehaviour
     {
         hasReceivedItem = false;
         isWaitingToLeave = false;
+
+        // Bật lại rotation để NPC có thể di chuyển bình thường
+        agent.updateRotation = true;
+        agent.updatePosition = true;
 
         if (animator != null)
         {
