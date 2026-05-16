@@ -593,6 +593,85 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1152126269}
   m_SourcePrefab: {fileID: 100100000, guid: bb197f2ef6298a244a8c770ea947998b, type: 3}
+--- !u!1001 &178553428
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -54.3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 41.09
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 49.69
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 66f8329084bd86940a4152d93e4ed8b0, type: 2}
+    - target: {fileID: 919132149155446097, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      propertyPath: m_Name
+      value: Bun Bo Khong Hanh
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 580905797}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 580905796}
+  m_SourcePrefab: {fileID: 100100000, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
 --- !u!1001 &188124734
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -974,6 +1053,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
   itemName: Shrimp
+--- !u!1 &580905795 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b685b1dcd612ab54c875e9b83e948b1a, type: 3}
+  m_PrefabInstance: {fileID: 178553428}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &580905796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580905795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
+  itemName: Bun Bo Khong Hanh
+--- !u!65 &580905797
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580905795}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.7065463, y: 1.2075479, z: 3.0646331}
+  m_Center: {x: 0.97253895, y: 0.10377364, z: -0.0517842}
 --- !u!1 &727562472 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: c25445bdc66619744b6a66d38141c8eb, type: 3}
@@ -1115,6 +1233,45 @@ MonoBehaviour:
   interactType: 1
   bowlTypeToSpawn: 0
   ingredientName: HuTieu
+--- !u!1 &916224810 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+  m_PrefabInstance: {fileID: 1638357103}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &916224811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916224810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
+  itemName: Hu Tieu Khong Hanh
+--- !u!65 &916224812
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916224810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.420333, y: 0.90342224, z: 3.6708412}
+  m_Center: {x: 0.73191893, y: 0.44356418, z: 0.10461871}
 --- !u!1 &934419995
 GameObject:
   m_ObjectHideFlags: 0
@@ -2490,9 +2647,12 @@ MonoBehaviour:
   holdingPlaceEmptyYellowBowl: {fileID: 1306207459}
   completedHuTieuBowl: {fileID: 1411567535}
   completedBunBoBowl: {fileID: 1629826177}
+  completedHuTieuKhongHanhBowl: {fileID: 916224810}
+  completedBunBoKhongHanhBowl: {fileID: 580905795}
   currentBowl: 0
   currentIngredients: []
   isBowlCompleted: 0
+  completedRecipeName: 
 --- !u!4 &1468519490
 Transform:
   m_ObjectHideFlags: 0
@@ -2893,6 +3053,85 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 999890fe81a419548984429bb49d0626, type: 3}
   m_PrefabInstance: {fileID: 1652189304}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1638357103
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -52.6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 39.24
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 52.15
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c88cec774d52b684a9d49da29bd0fbf2, type: 2}
+    - target: {fileID: 919132149155446097, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      propertyPath: m_Name
+      value: Hu Tieu Khong Hanh
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 916224812}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 916224811}
+  m_SourcePrefab: {fileID: 100100000, guid: cf1a0a886418f07418ee24fd02b749e9, type: 3}
 --- !u!1 &1643304868 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b8e9073fb85696546be0f91fce2a6e41, type: 3}
@@ -3592,3 +3831,5 @@ SceneRoots:
   - {fileID: 727954461}
   - {fileID: 1468519490}
   - {fileID: 168258687}
+  - {fileID: 178553428}
+  - {fileID: 1638357103}

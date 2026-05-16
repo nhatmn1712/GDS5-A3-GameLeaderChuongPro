@@ -26,16 +26,24 @@ public class CookingManager : MonoBehaviour
     public GameObject completedHuTieuBowl;
     [Tooltip("Mô hình tô Bún Bò đã nấu xong (có đầy đủ đồ ăn)")]
     public GameObject completedBunBoBowl;
+    [Tooltip("Mô hình tô Hủ Tiếu KHÔNG HÀNH đã nấu xong")]
+    public GameObject completedHuTieuKhongHanhBowl;
+    [Tooltip("Mô hình tô Bún Bò KHÔNG HÀNH đã nấu xong")]
+    public GameObject completedBunBoKhongHanhBowl;
 
     [Header("State (Don't touch)")]
     public BowlType currentBowl = BowlType.None;
     public List<string> currentIngredients = new List<string>();
     public bool isBowlCompleted = false;
+    public string completedRecipeName = "";
 
     // --- CÔNG THỨC NẤU ĂN (Recipes) ---
     // Tên nguyên liệu phải khớp với tên bạn điền trong script CookingIngredient
     private List<string> recipeHuTieu = new List<string> { "Tom", "TrungCut", "Pork", "HuTieu", "Hanh", "NuocLeoHuTieu" };
+    private List<string> recipeHuTieuKhongHanh = new List<string> { "Tom", "TrungCut", "Pork", "HuTieu", "NuocLeoHuTieu" };
+    
     private List<string> recipeBunBo = new List<string> { "Beef", "Huyet", "Bun", "Hanh", "NuocLeoBunBo" };
+    private List<string> recipeBunBoKhongHanh = new List<string> { "Beef", "Huyet", "Bun", "NuocLeoBunBo" };
 
     void Awake()
     {
@@ -61,6 +69,7 @@ public class CookingManager : MonoBehaviour
         currentBowl = type;
         currentIngredients.Clear();
         isBowlCompleted = false;
+        completedRecipeName = "";
         UpdateVisuals();
     }
 
@@ -127,31 +136,37 @@ public class CookingManager : MonoBehaviour
 
     private void CheckRecipeCompletion()
     {
-        List<string> targetRecipe = currentBowl == BowlType.WhiteHuTieu ? recipeHuTieu : recipeBunBo;
-
-        // Nếu chưa bỏ đủ số lượng món thì cứ tiếp tục nấu, không báo lỗi
-        if (currentIngredients.Count < targetRecipe.Count)
+        if (currentBowl == BowlType.WhiteHuTieu)
         {
-            return; 
+            if (IsRecipeMatch(recipeHuTieu)) CompleteBowl("HuTieu");
+            else if (IsRecipeMatch(recipeHuTieuKhongHanh)) CompleteBowl("HuTieuKhongHanh");
         }
-
-        // Nếu đã bỏ đủ số món, kiểm tra xem có đúng hết không
-        bool isCorrect = true;
-        foreach (string req in targetRecipe)
+        else if (currentBowl == BowlType.YellowBunBo)
         {
-            if (!currentIngredients.Contains(req))
-            {
-                isCorrect = false;
-                break;
-            }
+            if (IsRecipeMatch(recipeBunBo)) CompleteBowl("BunBo");
+            else if (IsRecipeMatch(recipeBunBoKhongHanh)) CompleteBowl("BunBoKhongHanh");
         }
+    }
 
-        if (isCorrect)
+    private bool IsRecipeMatch(List<string> recipe)
+    {
+        // Phải đủ số lượng món
+        if (currentIngredients.Count != recipe.Count) return false;
+
+        // Phải chứa đúng các món yêu cầu
+        foreach (string req in recipe)
         {
-            isBowlCompleted = true;
-            UpdateVisuals();
-            Debug.Log("Nấu xong một tô hoàn hảo!");
+            if (!currentIngredients.Contains(req)) return false;
         }
+        return true;
+    }
+
+    private void CompleteBowl(string recipeName)
+    {
+        isBowlCompleted = true;
+        completedRecipeName = recipeName;
+        UpdateVisuals();
+        Debug.Log("Nấu xong một tô " + recipeName + " hoàn hảo!");
     }
 
     private void UpdateVisuals()
@@ -161,6 +176,8 @@ public class CookingManager : MonoBehaviour
         if (holdingPlaceEmptyYellowBowl != null) holdingPlaceEmptyYellowBowl.SetActive(false);
         if (completedHuTieuBowl != null) completedHuTieuBowl.SetActive(false);
         if (completedBunBoBowl != null) completedBunBoBowl.SetActive(false);
+        if (completedHuTieuKhongHanhBowl != null) completedHuTieuKhongHanhBowl.SetActive(false);
+        if (completedBunBoKhongHanhBowl != null) completedBunBoKhongHanhBowl.SetActive(false);
 
         if (currentBowl == BowlType.None)
         {
@@ -171,8 +188,10 @@ public class CookingManager : MonoBehaviour
         // Hiện tô tương ứng
         if (isBowlCompleted)
         {
-            if (currentBowl == BowlType.WhiteHuTieu && completedHuTieuBowl != null) completedHuTieuBowl.SetActive(true);
-            else if (currentBowl == BowlType.YellowBunBo && completedBunBoBowl != null) completedBunBoBowl.SetActive(true);
+            if (completedRecipeName == "HuTieu" && completedHuTieuBowl != null) completedHuTieuBowl.SetActive(true);
+            else if (completedRecipeName == "HuTieuKhongHanh" && completedHuTieuKhongHanhBowl != null) completedHuTieuKhongHanhBowl.SetActive(true);
+            else if (completedRecipeName == "BunBo" && completedBunBoBowl != null) completedBunBoBowl.SetActive(true);
+            else if (completedRecipeName == "BunBoKhongHanh" && completedBunBoKhongHanhBowl != null) completedBunBoKhongHanhBowl.SetActive(true);
             
             if (bowlContentsPanel != null) bowlContentsPanel.SetActive(false);
         }
@@ -214,6 +233,7 @@ public class CookingManager : MonoBehaviour
         currentBowl = BowlType.None;
         currentIngredients.Clear();
         isBowlCompleted = false;
+        completedRecipeName = "";
         UpdateVisuals();
     }
 }
