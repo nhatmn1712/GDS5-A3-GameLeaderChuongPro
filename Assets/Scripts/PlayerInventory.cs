@@ -2,10 +2,12 @@ using UnityEngine;
 
 public static class PlayerInventory
 {
-    // Lưu trữ chuỗi tên tô đang cầm (VD: "HuTieu", "BunBoKhongHanh")
-    // Static giúp biến này tồn tại xuyên suốt các Scene
+    // Bowl the player is currently holding
     public static string carryingBowl = "";
 
-    // Kiểm tra xem có khách hàng nào đang đợi món không
+    // Walk-in customer order active
     public static bool hasActiveOrder = false;
+
+    // Grab delivery: what food the player needs to cook and deliver
+    public static string activeDeliveryFood = "";
 }
