@@ -1,124 +1,151 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
-/// Attach to an Image UI element in the main Canvas.
-/// Shows a screen-edge arrow pointing toward the active delivery spot.
+/// GTA/GPS-style screen-edge delivery indicator.
+///
+/// Behaviour:
+///  • Target ON-screen  → indicator hidden.
+///  • Target OFF-screen → badge appears at the nearest screen edge,
+///    rotated so its pointed tip aims at the target, and shows live distance.
+///
+/// Hierarchy (set up via MCP or manually):
+///   [DeliveryIndicator]          ← this script + RectTransform
+///         └─ [Badge]             ← the visible panel (Image background)
+///               ├─ [ArrowTip]   ← small triangle Image pointing "down" in badge-local space
+///               └─ [DistText]   ← TextMeshProUGUI showing "XXm"
 /// </summary>
+[RequireComponent(typeof(RectTransform))]
 public class DeliveryArrowUI : MonoBehaviour
 {
     public static DeliveryArrowUI Instance { get; private set; }
 
+    // ── References ───────────────────────────────────────────────────────────
     [Header("References")]
-    [Tooltip("The arrow Image that will rotate and move to the screen edge.")]
-    public RectTransform arrowRect;
-    [Tooltip("Main camera reference (leave blank to auto-find).")]
+    public RectTransform badge;          // The badge RectTransform that rotates + moves
+    public TextMeshProUGUI distanceText; // "XXm" text inside the badge
     public Camera mainCam;
 
-    private UnityEngine.UI.Image arrowImage;
+    // ── Screen Edge Settings ─────────────────────────────────────────────────
+    [Header("Screen Edge")]
+    [Tooltip("How far in from the screen border the badge center sits (pixels).")]
+    public float edgeMargin = 64f;
 
-    [Header("Settings")]
-    [Tooltip("How far from screen center the arrow sits (in pixels).")]
-    public float screenEdgeOffset = 80f;
+    // ── Colours ───────────────────────────────────────────────────────────────
+    [Header("Colours")]
+    public Color badgeColor    = new Color(0.18f, 0.80f, 0.44f, 1f); // vivid green
+    public Color textColor     = Color.white;
 
-    private Transform target = null;
-    private bool isVisible = false;
+    // ── Private ───────────────────────────────────────────────────────────────
+    private Transform     target    = null;
+    private bool          isActive  = false;
+    private RectTransform myRect;
+    private Image         badgeImage;
 
+    // ─────────────────────────────────────────────────────────────────────────
     void Awake()
     {
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
-        // Cache the Image component - use enabled flag instead of SetActive
-        // so this script keeps running even when the arrow is hidden
-        arrowImage = GetComponent<UnityEngine.UI.Image>();
-
-        HideArrow();
+        myRect     = GetComponent<RectTransform>();
+        badgeImage = badge != null ? badge.GetComponent<Image>() : null;
+        SetVisible(false);
     }
 
     void Start()
     {
-        if (mainCam == null)
-            mainCam = Camera.main;
+        if (mainCam == null) mainCam = Camera.main;
+
+        // Anchor to screen center so anchoredPosition is in screen-pixel coords
+        myRect.anchorMin = new Vector2(0.5f, 0.5f);
+        myRect.anchorMax = new Vector2(0.5f, 0.5f);
+        myRect.pivot     = new Vector2(0.5f, 0.5f);
+
+        // Apply colours
+        if (badgeImage   != null) badgeImage.color   = badgeColor;
+        if (distanceText != null) distanceText.color  = textColor;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
     void LateUpdate()
     {
-        if (!isVisible || target == null || mainCam == null) return;
+        if (!isActive || target == null || mainCam == null) return;
 
-        Vector3 screenPos = mainCam.WorldToViewportPoint(target.position);
+        // ── Viewport position of target ──────────────────────────────────────
+        Vector3 vp = mainCam.WorldToViewportPoint(target.position);
+        bool behind = vp.z < 0f;
 
-        // Check if target is behind the camera
-        bool isBehind = screenPos.z < 0f;
-
-        // Convert viewport (0-1) to determine if on screen
-        bool onScreen = !isBehind
-                        && screenPos.x > 0.05f && screenPos.x < 0.95f
-                        && screenPos.y > 0.05f && screenPos.y < 0.95f;
+        // On-screen check (with small margin)
+        bool onScreen = !behind
+                     && vp.x > 0.05f && vp.x < 0.95f
+                     && vp.y > 0.05f && vp.y < 0.95f;
 
         if (onScreen)
         {
-            // Target is visible — hide the arrow
-            if (arrowRect != null) arrowRect.gameObject.SetActive(false);
+            SetVisible(false);
+            return;
         }
-        else
-        {
-            // Target is off screen — show and position arrow at screen edge
-            if (arrowRect != null) arrowRect.gameObject.SetActive(true);
-            PositionArrowAtEdge(screenPos, isBehind);
-        }
-    }
 
-    void PositionArrowAtEdge(Vector3 screenPos, bool isBehind)
-    {
-        // If behind camera, flip the direction
+        SetVisible(true);
+
+        // ── Direction from screen center → target ────────────────────────────
         Vector2 dir;
-        if (isBehind)
-        {
-            dir = new Vector2(
-                -(screenPos.x - 0.5f),
-                -(screenPos.y - 0.5f)
-            );
-        }
+        if (behind)
+            dir = new Vector2(-(vp.x - 0.5f), -(vp.y - 0.5f));
         else
-        {
-            dir = new Vector2(
-                screenPos.x - 0.5f,
-                screenPos.y - 0.5f
-            );
-        }
-
+            dir = new Vector2(vp.x - 0.5f, vp.y - 0.5f);
         dir.Normalize();
 
-        // Convert to screen space and clamp to edge
-        float halfW = Screen.width  * 0.5f - screenEdgeOffset;
-        float halfH = Screen.height * 0.5f - screenEdgeOffset;
+        // ── Clamp to screen edge ─────────────────────────────────────────────
+        float halfW = Screen.width  * 0.5f - edgeMargin;
+        float halfH = Screen.height * 0.5f - edgeMargin;
+        float scale = Mathf.Min(halfW / Mathf.Abs(dir.x + 0.0001f),
+                                halfH / Mathf.Abs(dir.y + 0.0001f));
 
-        float scale = Mathf.Min(
-            halfW / Mathf.Abs(dir.x),
-            halfH / Mathf.Abs(dir.y)
-        );
+        myRect.anchoredPosition = dir * scale;
 
-        Vector2 edgePos = dir * scale;
+        // ── Rotate badge so its tip points toward target ─────────────────────
+        if (badge != null)
+        {
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            // Badge tip points UP in local space → offset -90°
+            badge.localRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        }
 
-        arrowRect.anchoredPosition = edgePos;
-
-        // Rotate arrow to point toward the target
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        arrowRect.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        // ── Distance label ───────────────────────────────────────────────────
+        if (distanceText != null)
+        {
+            float dist = Vector3.Distance(mainCam.transform.position, target.position);
+            distanceText.text = $"{Mathf.RoundToInt(dist)}m";
+            // Counter-rotate text so it stays readable
+            distanceText.rectTransform.localRotation =
+                badge != null
+                    ? Quaternion.Inverse(badge.localRotation)
+                    : Quaternion.identity;
+        }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    void SetVisible(bool show)
+    {
+        if (badge != null) badge.gameObject.SetActive(show);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    /// <summary>Call from GrabOrderManager.AcceptOrder().</summary>
     public void SetTarget(Transform t)
     {
-        target = t;
-        isVisible = true;
-        if (arrowImage != null) arrowImage.enabled = true;
+        target   = t;
+        isActive = true;
     }
 
+    /// <summary>Call from GrabOrderManager.CompleteDelivery() / RejectOrder().</summary>
     public void HideArrow()
     {
-        isVisible = false;
-        target = null;
-        if (arrowImage != null) arrowImage.enabled = false;
+        isActive = false;
+        target   = null;
+        SetVisible(false);
     }
 }
