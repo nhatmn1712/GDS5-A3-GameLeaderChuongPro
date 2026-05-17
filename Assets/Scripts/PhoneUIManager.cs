@@ -29,6 +29,12 @@ public class PhoneUIManager : MonoBehaviour
     [Tooltip("Shows the estimated pay.")]
     public TextMeshProUGUI orderPayText;
 
+    [Header("Buttons")]
+    [Tooltip("Drag the Accept Button GameObject here.")]
+    public GameObject acceptButton;
+    [Tooltip("Drag the Reject Button GameObject here.")]
+    public GameObject rejectButton;
+
     private bool isPhoneOpen = false;
     private bool isShaking = false;
     private Coroutine shakeCoroutine;
@@ -140,16 +146,16 @@ public class PhoneUIManager : MonoBehaviour
         if (gom.HasPendingNotification)
         {
             StopShake();
-            ShowOrderPanel(gom);
+            ShowOrderPanel(gom, false); // false = not a reminder, it's a new order
         }
         else if (gom.HasActiveOrder)
         {
             // Show reminder of current active order
-            ShowOrderPanel(gom);
+            ShowOrderPanel(gom, true); // true = it IS a reminder, hide the buttons!
         }
     }
 
-    void ShowOrderPanel(GrabOrderManager gom)
+    void ShowOrderPanel(GrabOrderManager gom, bool isReminder)
     {
         if (grabOrderPanel == null) return;
         grabOrderPanel.SetActive(true);
@@ -162,6 +168,10 @@ public class PhoneUIManager : MonoBehaviour
 
         if (orderPayText != null)
             orderPayText.text = "Estimated Pay: $" + gom.EstimatedPay;
+
+        // Hide buttons if this is just a reminder!
+        if (acceptButton != null) acceptButton.SetActive(!isReminder);
+        if (rejectButton != null) rejectButton.SetActive(!isReminder);
     }
 
     // ─── Accept / Reject buttons ─────────────────────────────────────

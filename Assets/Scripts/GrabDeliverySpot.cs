@@ -13,6 +13,8 @@ public class GrabDeliverySpot : MonoBehaviour
     [Header("NPC Reference")]
     [Tooltip("The NPC model standing outside waiting. Can be any GameObject.")]
     public GameObject waitingNpc;
+    [Tooltip("The name of the animation state in the Animator to play while waiting.")]
+    public string idleStateName = "Standing Idle";
 
     [Header("UI")]
     [Tooltip("Drag the InteractCanvas here so the prompt appears above the NPC.")]
@@ -27,10 +29,23 @@ public class GrabDeliverySpot : MonoBehaviour
     private bool playerInRange = false;
     private PlayerInteract currentPlayer = null;
 
+    private Vector3 originalNpcPos;
+    private Quaternion originalNpcRot;
+
     void Start()
     {
-        // NPC always visible, but spot is inactive until an order comes in
         if (promptUI != null) promptUI.Hide();
+        
+        // Find the player once at the start
+        currentPlayer = FindObjectOfType<PlayerInteract>(true);
+
+        // Store original NPC position and hide them until an order arrives
+        if (waitingNpc != null)
+        {
+            originalNpcPos = waitingNpc.transform.position;
+            originalNpcRot = waitingNpc.transform.rotation;
+            waitingNpc.SetActive(false); // Hide initially
+        }
     }
 
     /// <summary>Called by GrabOrderManager when this spot is assigned an order.</summary>
@@ -38,7 +53,25 @@ public class GrabDeliverySpot : MonoBehaviour
     {
         IsActive = true;
         expectedFood = food;
-        if (promptUI != null) promptUI.Hide(); // Will show when player enters range
+        if (promptUI != null) promptUI.Hide();
+
+        // Show the NPC at the door waiting
+        if (waitingNpc != null)
+        {
+            waitingNpc.SetActive(true);
+            
+            // Reset position and rotation
+            waitingNpc.transform.position = originalNpcPos;
+            waitingNpc.transform.rotation = originalNpcRot;
+
+            Animator anim = waitingNpc.GetComponentInChildren<Animator>();
+            if (anim != null)
+            {
+                anim.SetBool("IsMoving", false);
+                anim.Play(idleStateName);
+            }
+        }
+
         Debug.Log($"[GrabSpot] {locationName} is now active, expecting: {food}");
     }
 
@@ -48,15 +81,40 @@ public class GrabDeliverySpot : MonoBehaviour
         IsActive = false;
         expectedFood = "";
         playerInRange = false;
-        currentPlayer = null;
         if (promptUI != null) promptUI.Hide();
     }
 
     void Update()
     {
-        if (!IsActive || !playerInRange || currentPlayer == null) return;
+        if (!IsActive) return;
 
-        if (currentPlayer.IsHoldingItem())
+        if (currentPlayer == null) 
+            currentPlayer = FindObjectOfType<PlayerInteract>(true);
+            
+        if (currentPlayer == null) return;
+
+        // 1. Check Distance (handles both walking and riding the bike)
+        playerInRange = false;
+        
+        if (currentPlayer.gameObject.activeInHierarchy)
+        {
+            // Player is walking
+            if (Vector3.Distance(transform.position, currentPlayer.transform.position) <= interactRadius)
+                playerInRange = true;
+        }
+        else
+        {
+            // Player might be hidden because they are on the bike
+            BikeController bike = FindObjectOfType<BikeController>();
+            if (bike != null && bike.gameObject.activeInHierarchy)
+            {
+                if (Vector3.Distance(transform.position, bike.transform.position) <= interactRadius)
+                    playerInRange = true;
+            }
+        }
+
+        // 2. Show UI and allow interaction if in range AND holding the bowl
+        if (playerInRange && currentPlayer.IsHoldingItem())
         {
             if (promptUI != null) promptUI.Show("Press E", "to deliver order");
 
@@ -92,11 +150,13 @@ public class GrabDeliverySpot : MonoBehaviour
                 DialogueManager.Instance.StartDialogue(new DialogueLine[] { line }, () =>
                 {
                     GrabOrderManager.Instance?.CompleteDelivery();
+                    StartCoroutine(NpcWalkAwayRoutine());
                 });
             }
             else
             {
                 GrabOrderManager.Instance?.CompleteDelivery();
+                StartCoroutine(NpcWalkAwayRoutine());
             }
         }
         else
@@ -124,27 +184,18 @@ public class GrabDeliverySpot : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    System.Collections.IEnumerator NpcWalkAwayRoutine()
     {
-        if (!IsActive) return;
-        PlayerInteract pi = other.GetComponent<PlayerInteract>() ?? other.GetComponentInParent<PlayerInteract>();
-        if (pi != null)
-        {
-            playerInRange = true;
-            currentPlayer = pi;
-        }
+        if (waitingNpc == null) yield break;
+
+        // Wait a tiny fraction of a second after dialogue finishes
+        yield return new WaitForSeconds(0.5f);
+
+        // Magically disappear until the next order!
+        waitingNpc.SetActive(false);
     }
 
-    void OnTriggerExit(Collider other)
-    {
-        PlayerInteract pi = other.GetComponent<PlayerInteract>() ?? other.GetComponentInParent<PlayerInteract>();
-        if (pi != null)
-        {
-            playerInRange = false;
-            currentPlayer = null;
-            if (promptUI != null) promptUI.Hide();
-        }
-    }
+    // Removed OnTriggerEnter and OnTriggerExit because we are now using reliable distance checking in Update() instead.
 
     void OnDrawGizmosSelected()
     {
