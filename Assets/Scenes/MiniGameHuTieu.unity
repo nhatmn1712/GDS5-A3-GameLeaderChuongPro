@@ -1504,7 +1504,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CookingIngredient
   interactType: 1
   bowlTypeToSpawn: 0
-  ingredientName: Tom
+  ingredientName: Shrimp
 --- !u!114 &976002577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1517,7 +1517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: Tom
+  itemName: Shrimp
 --- !u!1 &1048087160
 GameObject:
   m_ObjectHideFlags: 0
@@ -1974,7 +1974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CookingIngredient
   interactType: 1
   bowlTypeToSpawn: 0
-  ingredientName: Hanh
+  ingredientName: Scallion
 --- !u!1 &1133396928
 GameObject:
   m_ObjectHideFlags: 0
@@ -2119,7 +2119,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CookingIngredient
   interactType: 1
   bowlTypeToSpawn: 0
-  ingredientName: Huyet
+  ingredientName: Blood Pudding
 --- !u!114 &1152126270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2132,7 +2132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3254eae6c5ff6b148a381ae3abcb37ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemHoverInteract
-  itemName: Huyet
+  itemName: Blood Pudding
 --- !u!65 &1152126271
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3324,7 +3324,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: be0a1bcc475a96941873d2d05bc3c3e2, type: 3}
       propertyPath: m_Name
-      value: scallion
+      value: Scallion
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: be0a1bcc475a96941873d2d05bc3c3e2, type: 3}
       propertyPath: m_Layer

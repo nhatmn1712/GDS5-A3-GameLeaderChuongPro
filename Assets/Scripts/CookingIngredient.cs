@@ -13,7 +13,7 @@ public class CookingIngredient : MonoBehaviour
     public BowlType bowlTypeToSpawn;
 
     [Header("If Type = Food Ingredient")]
-    [Tooltip("Ghi chính xác tên: Tom, TrungCut, HuTieu, Hanh, NuocLeoHuTieu, Beef, Bun, NuocLeoBunBo")]
+    [Tooltip("Exact name must match the recipe. Valid names: Shrimp, TrungCut, Pork, HuTieu, Scallion, NuocLeoHuTieu, Beef, Blood Pudding, Bun, NuocLeoBunBo")]
     public string ingredientName;
 
     void OnMouseDown()

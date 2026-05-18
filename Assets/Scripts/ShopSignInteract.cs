@@ -56,13 +56,13 @@ public class ShopSignInteract : MonoBehaviour
         if (playerInRange)
         {
             bool isOpen = RestaurantManager.Instance.isShopOpen;
-            
+
             if (promptUI != null)
             {
                 if (isOpen)
-                    promptUI.Show("Cửa Hàng (Shop)", "Nhấn E để ĐÓNG CỬA");
+                    promptUI.Show("Shop Sign", "Press E to CLOSE shop");
                 else
-                    promptUI.Show("Cửa Hàng (Shop)", "Nhấn E để MỞ CỬA");
+                    promptUI.Show("Shop Sign", "Press E to OPEN shop");
             }
 
             if (Input.GetKeyDown(KeyCode.E))
@@ -91,14 +91,14 @@ public class ShopSignInteract : MonoBehaviour
             Vector3 centerPoint = interactCenter != null ? interactCenter.position : transform.position;
             transform.RotateAround(centerPoint, Vector3.up, 180f);
         }
-        
+
         // Update the prompt immediately after pressing E
         if (promptUI != null)
         {
             if (isOpen)
-                promptUI.Show("Cửa Hàng (Shop)", "Nhấn E để ĐÓNG CỬA");
+                promptUI.Show("Shop Sign", "Press E to CLOSE shop");
             else
-                promptUI.Show("Cửa Hàng (Shop)", "Nhấn E để MỞ CỬA");
+                promptUI.Show("Shop Sign", "Press E to OPEN shop");
         }
     }
 

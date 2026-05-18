@@ -55,7 +55,7 @@ public class InteractPromptUI : MonoBehaviour
     }
 
     /// <summary>Gọi khi player vào vùng tương tác (phiên bản cũ).</summary>
-    public void Show(string itemName = "Xe Hủ Tiếu", string action = "Giữ E để lấy")
+    public void Show(string itemName = "Interact", string action = "Hold E")
     {
         shouldShow = true;
         if (itemNameText != null) itemNameText.text = itemName;

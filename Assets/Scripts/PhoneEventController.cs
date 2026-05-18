@@ -96,7 +96,7 @@ public class PhoneEventController : MonoBehaviour
             if (isRinging)
             {
                 if (playerInRange && !wasInRange && phonePromptUI != null)
-                    phonePromptUI.Show("Điện Thoại", "Nhấn Y để nghe máy");
+                    phonePromptUI.Show("Phone", "Press Y to answer");
                 else if (!playerInRange && wasInRange && phonePromptUI != null)
                     phonePromptUI.Hide();
             }

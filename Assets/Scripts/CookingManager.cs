@@ -39,11 +39,11 @@ public class CookingManager : MonoBehaviour
 
     // --- CÔNG THỨC NẤU ĂN (Recipes) ---
     // Tên nguyên liệu phải khớp với tên bạn điền trong script CookingIngredient
-    private List<string> recipeHuTieu = new List<string> { "Tom", "TrungCut", "Pork", "HuTieu", "Hanh", "NuocLeoHuTieu" };
-    private List<string> recipeHuTieuKhongHanh = new List<string> { "Tom", "TrungCut", "Pork", "HuTieu", "NuocLeoHuTieu" };
+    private List<string> recipeHuTieu = new List<string> { "Shrimp", "TrungCut", "Pork", "HuTieu", "Scallion", "NuocLeoHuTieu" };
+    private List<string> recipeHuTieuKhongHanh = new List<string> { "Shrimp", "TrungCut", "Pork", "HuTieu", "NuocLeoHuTieu" };
     
-    private List<string> recipeBunBo = new List<string> { "Beef", "Huyet", "Bun", "Hanh", "NuocLeoBunBo" };
-    private List<string> recipeBunBoKhongHanh = new List<string> { "Beef", "Huyet", "Bun", "NuocLeoBunBo" };
+    private List<string> recipeBunBo = new List<string> { "Beef", "Blood Pudding", "Bun", "Scallion", "NuocLeoBunBo" };
+    private List<string> recipeBunBoKhongHanh = new List<string> { "Beef", "Blood Pudding", "Bun", "NuocLeoBunBo" };
 
     void Awake()
     {
@@ -85,7 +85,7 @@ public class CookingManager : MonoBehaviour
     {
         if (currentBowl != BowlType.None)
         {
-            ShowError("Vui lòng dọn tô hiện tại ra trước!");
+            ShowError("Please clear the current bowl first!");
             return;
         }
 
@@ -118,9 +118,9 @@ public class CookingManager : MonoBehaviour
         }
         else
         {
-            // Vứt tô làm sai
+            // Discard the incorrect bowl
             ResetCookingStation();
-            ShowError("Đã đổ bỏ tô bị hư!");
+            ShowError("Bowl discarded! Start over.");
         }
     }
 
@@ -129,31 +129,31 @@ public class CookingManager : MonoBehaviour
     {
         if (currentBowl == BowlType.None)
         {
-            ShowError("Bạn phải lấy tô rỗng ra trước!");
+            ShowError("You must grab an empty bowl first!");
             return;
         }
 
         if (isBowlCompleted)
         {
-            ShowError("Tô này đã nấu xong, hãy giao cho khách!");
+            ShowError("This bowl is done! Deliver it to the customer.");
             return;
         }
 
         if (currentIngredients.Contains(ingredient))
         {
-            ShowError("Nguyên liệu này đã có trong tô rồi!");
+            ShowError("This ingredient is already in the bowl!");
             return;
         }
 
         // Kiểm tra xem nguyên liệu này có được phép bỏ vào tô hiện tại không
         if (currentBowl == BowlType.WhiteHuTieu && !recipeHuTieu.Contains(ingredient))
         {
-            ShowError($"Không thể cho món này vào tô Hủ Tiếu!");
+            ShowError($"This ingredient doesn't belong in a Hu Tieu bowl!");
             return;
         }
         else if (currentBowl == BowlType.YellowBunBo && !recipeBunBo.Contains(ingredient))
         {
-            ShowError($"Không thể cho món này vào tô Bún Bò!");
+            ShowError($"This ingredient doesn't belong in a Bun Bo bowl!");
             return;
         }
 
@@ -197,7 +197,7 @@ public class CookingManager : MonoBehaviour
         isBowlCompleted = true;
         completedRecipeName = recipeName;
         UpdateVisuals();
-        Debug.Log("Nấu xong một tô " + recipeName + " hoàn hảo!");
+        Debug.Log("Bowl completed: " + recipeName);
     }
 
     private void UpdateVisuals()
@@ -235,8 +235,8 @@ public class CookingManager : MonoBehaviour
             if (bowlContentsPanel != null)
             {
                 bowlContentsPanel.SetActive(true);
-                string contents = "Trong tô: ";
-                if (currentIngredients.Count == 0) contents += "Trống";
+                string contents = "In bowl: ";
+                if (currentIngredients.Count == 0) contents += "Empty";
                 else contents += string.Join(", ", currentIngredients);
                 if (bowlContentsText != null) bowlContentsText.text = contents;
             }

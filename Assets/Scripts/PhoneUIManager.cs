@@ -62,7 +62,7 @@ public class PhoneUIManager : MonoBehaviour
             UpdateTimeDisplay();
     }
 
-    void TogglePhone()
+    public void TogglePhone()
     {
         isPhoneOpen = !isPhoneOpen;
 

@@ -73,7 +73,7 @@ public class BikeController : MonoBehaviour
         // Show/Hide UI prompt
         if (playerInRange && !wasInRange && interactUI != null)
         {
-            interactUI.Show("Xe Đạp", "Nhấn F để lái xe");
+            interactUI.Show("Bicycle", "Press F to ride");
         }
         else if (!playerInRange && wasInRange && interactUI != null)
         {

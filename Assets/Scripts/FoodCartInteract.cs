@@ -13,8 +13,8 @@ public class FoodCartInteract : MonoBehaviour
     public GameObject bunBoPrefab;
     public GameObject bunBoKhongHanhPrefab;
 
-    public string cartName = "Xe Hủ Tiếu";
-    public string actionHint = "Giữ E để nấu ăn";
+    public string cartName = "Hu Tieu Cart";
+    public string actionHint = "Hold E to Cook";
 
     [Header("Interaction Settings")]
     public float holdDuration = 1.5f;        // Thời gian giữ E để lấy (giây)
@@ -65,7 +65,7 @@ public class FoodCartInteract : MonoBehaviour
         // Nếu chưa có khách gọi món thì hiện thông báo và không cho tương tác
         if (!PlayerInventory.hasActiveOrder)
         {
-            if (promptUI != null) promptUI.Show(cartName, "Chưa có khách gọi món!");
+            if (promptUI != null) promptUI.Show(cartName, "No orders yet!");
             if (isHolding)
             {
                 isHolding = false;
@@ -195,7 +195,7 @@ public class FoodCartInteract : MonoBehaviour
                 else if (PlayerInventory.hasActiveOrder)
                     promptUI.Show(cartName, actionHint);
                 else
-                    promptUI.Show(cartName, "Chưa có khách gọi món!");
+                    promptUI.Show(cartName, "No orders yet!");
             }
         }
     }

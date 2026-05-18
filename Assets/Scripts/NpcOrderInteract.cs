@@ -6,20 +6,20 @@ public class NpcOrderInteract : MonoBehaviour
     [Header("References")]
     [Tooltip("The NpcCustomer component on this NPC (will auto-find if empty).")]
     public NpcCustomer customer;
-    [Tooltip("The UI Panel that shows the order (giống panel xe hủ tiếu).")]
+    [Tooltip("The UI Panel that shows the interact prompt above the NPC.")]
     public InteractPromptUI promptUI;
 
     [Header("Dialogue Settings")]
-    [Tooltip("Tên hiển thị của NPC trên panel (VD: Customer, Bà Hai, Chú Ba...)")]
+    [Tooltip("Display name shown above the NPC and in dialogue.")]
     public string npcDisplayName = "Customer";
 
     [Header("Settings")]
-    public string actionHint = "Nhấn F để nhận order";
+    public string actionHint = "press F to confirm order";
     [Tooltip("How close the player needs to be to see the UI and interact.")]
     public float detectRange = 2.5f;
 
     [HideInInspector]
-    public string orderText = "F - Nhận Order";
+    public string orderText = "F";
     private string dialogueText = "";
 
     private bool playerInRange = false;
