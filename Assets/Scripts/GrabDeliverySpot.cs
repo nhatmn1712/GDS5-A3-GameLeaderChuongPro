@@ -256,7 +256,8 @@ public class GrabDeliverySpot : MonoBehaviour
             // Wrong food!
             DialogueLine line = new DialogueLine();
             line.speakerName = "Customer";
-            line.dialogueText = "I'm sorry, this is not what I ordered. Please check again!";
+            string orderedFoodName = GetFoodDisplayName(expectedFood);
+            line.dialogueText = $"I'm sorry, this is not what I ordered. I ordered {orderedFoodName}. Please check again!";
             line.speakerPortrait = null;
 
             if (DialogueManager.Instance != null)
@@ -288,5 +289,17 @@ public class GrabDeliverySpot : MonoBehaviour
         Gizmos.DrawSphere(transform.position, interactRadius);
         Gizmos.color = new Color(0f, 1f, 0.3f, 1f);
         Gizmos.DrawWireSphere(transform.position, interactRadius);
+    }
+
+    private string GetFoodDisplayName(string internalName)
+    {
+        switch (internalName)
+        {
+            case "HuTieu": return "Hu Tieu (with scallions)";
+            case "HuTieuKhongHanh": return "Hu Tieu (no scallions)";
+            case "BunBo": return "Bun Bo (with scallions)";
+            case "BunBoKhongHanh": return "Bun Bo (no scallions)";
+            default: return internalName;
+        }
     }
 }

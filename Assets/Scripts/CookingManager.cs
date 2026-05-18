@@ -80,6 +80,18 @@ public class CookingManager : MonoBehaviour
         if (errorPanel != null) errorPanel.SetActive(false);
     }
 
+    void Update()
+    {
+        // Fallback: Cho phép click chuột phải để hủy tô nhanh nếu click vào bàn bị vướng
+        if (Input.GetMouseButtonDown(1)) 
+        {
+            if (currentBowl != BowlType.None && !isBowlCompleted)
+            {
+                OnHoldingPlaceClicked(); // Gọi hàm vứt tô
+            }
+        }
+    }
+
     // Được gọi khi bấm vào chồng tô (để lấy tô mới ra)
     public void OnBowlStackClicked(BowlType type)
     {
@@ -127,6 +139,9 @@ public class CookingManager : MonoBehaviour
     // Được gọi khi bấm vào từng nguyên liệu (Tôm, Thịt bò, Nước lèo...)
     public void OnIngredientClicked(string ingredient)
     {
+        // Tự động tắt lỗi cũ nếu người chơi đang thao tác tiếp
+        HideError();
+
         if (currentBowl == BowlType.None)
         {
             ShowError("You must grab an empty bowl first!");

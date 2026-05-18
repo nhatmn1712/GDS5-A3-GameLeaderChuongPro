@@ -79,8 +79,13 @@ public class PhoneUIManager : MonoBehaviour
         }
         else
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            // Do not lock the cursor if the player is currently in the cooking minigame
+            bool isCooking = UnityEngine.SceneManagement.SceneManager.GetSceneByName("MiniGameHuTieu").isLoaded;
+            if (!isCooking)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
     }
 

@@ -56,23 +56,45 @@ public class DayNightCycle : MonoBehaviour
     [Header("Street Lights (Tự động đèn đường)")]
     public bool autoControlStreetLights = true;
     [Tooltip("Hệ số nhân độ sáng của tất cả các đèn khi trời tối")]
-    public float nightIntensityMultiplier = 5f;
+    public float nightIntensityMultiplier = 8f;
     [Tooltip("Hệ số nhân tầm chiếu xa (range) của các đèn khi trời tối")]
     public float nightRangeMultiplier = 2f;
 
-    private struct LightData {
-        public Light light;
-        public float baseIntensity;
-        public float baseRange;
-    }
-    private LightData[] sceneLights;
+    // Lưu trữ đèn và intensity gốc
+    private Light[]  _streetLights;     // tất cả đèn (không phải directional)
+    private float[]  _baseLightIntensity; // intensity gốc ban ngày
+    private float[]  _baseLightRange;     // range gốc
 
     private float timeMultiplier;
+    private bool  _lightsScanned = false;
 
     void Start()
     {
-        // Calculate how much the timeOfDay should increase per real-time second
         timeMultiplier = 24f / (dayDurationInMinutes * 60f);
+        ScanSceneLights();
+    }
+
+    void ScanSceneLights()
+    {
+        var allLights = FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var lights   = new System.Collections.Generic.List<Light>();
+        var intensities = new System.Collections.Generic.List<float>();
+        var ranges      = new System.Collections.Generic.List<float>();
+
+        foreach (Light l in allLights)
+        {
+            if (l == sunLight) continue;
+            if (l.type == LightType.Directional) continue;
+            lights.Add(l);
+            intensities.Add(l.intensity);
+            ranges.Add(l.range);
+        }
+
+        _streetLights        = lights.ToArray();
+        _baseLightIntensity  = intensities.ToArray();
+        _baseLightRange      = ranges.ToArray();
+        _lightsScanned       = true;
+        Debug.Log($"[DayNight] Scanned {_streetLights.Length} street/point lights.");
     }
 
     void Update()
@@ -119,23 +141,28 @@ public class DayNightCycle : MonoBehaviour
         sunLight.color = sunColor.Evaluate(timePercent);
         sunLight.intensity = sunIntensity.Evaluate(timePercent);
 
-        // Ép ánh sáng môi trường (Ambient) tối dần theo mặt trời để cảnh đêm thực sự tối đen
-        RenderSettings.ambientIntensity = Mathf.Clamp01(sunLight.intensity);
+        // Ambient: giữ tối thiểu 0.15 để không đen hoàn toàn
+        float ambientMin = 0.15f;
+        RenderSettings.ambientIntensity = Mathf.Max(ambientMin, Mathf.Clamp01(sunLight.intensity));
 
-        // Bật/tắt và tăng độ sáng đèn đường
-        if (autoControlStreetLights && sceneLights != null)
+        // Điều khiển đèn đường
+        if (autoControlStreetLights && _lightsScanned && _streetLights != null)
         {
-            // Tính độ tối (1.0 = tối thui, 0.0 = ban ngày)
-            float darkness = 1f - Mathf.Clamp01(sunLight.intensity);
-            
-            foreach (LightData data in sceneLights)
+            // darkness: 0 = ban ngày, 1 = hoàn toàn tối đêm
+            float sunI    = Mathf.Clamp01(sunLight.intensity);
+            float darkness = 1f - sunI;
+
+            for (int i = 0; i < _streetLights.Length; i++)
             {
-                if (data.light != null)
-                {
-                    // Ban ngày tắt đèn (0), ban đêm sáng mạnh (nhân hệ số)
-                    data.light.intensity = data.baseIntensity * nightIntensityMultiplier * darkness;
-                    data.light.range = data.baseRange * nightRangeMultiplier;
-                }
+                if (_streetLights[i] == null) continue;
+                // Ban ngày = intensity gốc (không tắt hoàn toàn)
+                // Ban đêm  = intensity gốc × multiplier
+                float targetIntensity = Mathf.Lerp(
+                    _baseLightIntensity[i],                                  // ban ngày
+                    _baseLightIntensity[i] * nightIntensityMultiplier,       // ban đêm
+                    darkness);
+                _streetLights[i].intensity = targetIntensity;
+                _streetLights[i].range     = _baseLightRange[i]; // giữ range gốc
             }
         }
 

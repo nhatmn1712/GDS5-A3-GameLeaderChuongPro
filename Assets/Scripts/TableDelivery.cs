@@ -154,7 +154,8 @@ public class TableDelivery : MonoBehaviour
 
             DialogueLine line = new DialogueLine();
             line.speakerName = "Customer";
-            line.dialogueText = "I'm sorry, this is not what I ordered. Please check again!";
+            string orderedFoodName = GetFoodDisplayName(linkedNpc.desiredItem);
+            line.dialogueText = $"I'm sorry, this is not what I ordered. I ordered {orderedFoodName}. Please check again!";
             line.speakerPortrait = null;
 
             if (DialogueManager.Instance != null)
@@ -238,6 +239,18 @@ public class TableDelivery : MonoBehaviour
             currentPlayer = null;
             InteractPromptUI activeUI = GetActivePromptUI();
             if (activeUI != null) activeUI.Hide();
+        }
+    }
+
+    private string GetFoodDisplayName(string internalName)
+    {
+        switch (internalName)
+        {
+            case "HuTieu": return "Hu Tieu (with scallions)";
+            case "HuTieuKhongHanh": return "Hu Tieu (no scallions)";
+            case "BunBo": return "Bun Bo (with scallions)";
+            case "BunBoKhongHanh": return "Bun Bo (no scallions)";
+            default: return internalName;
         }
     }
 }
