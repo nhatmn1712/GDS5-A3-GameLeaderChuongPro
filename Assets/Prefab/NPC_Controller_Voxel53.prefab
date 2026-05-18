@@ -638,6 +638,7 @@ MonoBehaviour:
   despawnPoint: {fileID: 0}
   wanderRadius: 10
   wanderCheckInterval: 5
+  rotationSpeed: 10
   headBone: {fileID: 2446903327818399472}
 --- !u!135 &8111334354820132512
 SphereCollider:
@@ -1117,6 +1118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractPromptUI
   canvasGroup: {fileID: 7324685750314763435}
   loadingArcImage: {fileID: 1950603867458581273}
+  keyText: {fileID: 6262722996417272784}
   itemNameText: {fileID: 7030357166254091708}
   actionText: {fileID: 5769329563648036294}
   fadeSpeed: 4

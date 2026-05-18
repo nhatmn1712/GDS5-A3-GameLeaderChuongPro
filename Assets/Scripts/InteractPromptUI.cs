@@ -11,7 +11,8 @@ public class InteractPromptUI : MonoBehaviour
     [Header("References")]
     public CanvasGroup canvasGroup;      // CanvasGroup trên Panel gốc
     public Image loadingArcImage;        // Image kiểu Filled Radial360 - vòng loading
-    public Text itemNameText;           // Text tên vật thể
+    public Text keyText;                // Text hiển thị phím bấm (ví dụ: E, F)
+    public Text itemNameText;           // Text tên vật thể / Tiêu đề
     public Text actionText;             // Text hướng dẫn hành động
 
     [Header("Fade Settings")]
@@ -53,11 +54,20 @@ public class InteractPromptUI : MonoBehaviour
                          mainCam.transform.rotation * Vector3.up);
     }
 
-    /// <summary>Gọi khi player vào vùng tương tác.</summary>
+    /// <summary>Gọi khi player vào vùng tương tác (phiên bản cũ).</summary>
     public void Show(string itemName = "Xe Hủ Tiếu", string action = "Giữ E để lấy")
     {
         shouldShow = true;
         if (itemNameText != null) itemNameText.text = itemName;
+        if (actionText != null) actionText.text = action;
+    }
+
+    /// <summary>Gọi khi player vào vùng tương tác (phiên bản mới, có phím).</summary>
+    public void Show(string key, string title, string action)
+    {
+        shouldShow = true;
+        if (keyText != null) keyText.text = key;
+        if (itemNameText != null) itemNameText.text = title;
         if (actionText != null) actionText.text = action;
     }
 

@@ -14,11 +14,27 @@ public class ThirdPersonCamera : MonoBehaviour
     public float pitchMin = -20f;     // Lowest camera angle
     public float pitchMax = 60f;      // Highest camera angle
 
+    [Header("First Person Settings")]
+    public bool isFirstPerson = false;
+    public Vector3 firstPersonOffset = new Vector3(0f, 1.8f, 0.3f); // Vị trí đầu nhân vật (hơi nhô ra trước để không bị kẹt vào mesh)
+    private Vector3 thirdPersonOffset;
+
     void Start()
     {
         // Lock and hide the cursor for better camera control
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
+        thirdPersonOffset = offset;
+    }
+
+    void Update()
+    {
+        // Nhấn phím B để chuyển đổi góc nhìn
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            isFirstPerson = !isFirstPerson;
+        }
     }
 
     void LateUpdate()
@@ -32,17 +48,30 @@ public class ThirdPersonCamera : MonoBehaviour
         // Clamp the up/down rotation so camera doesn't flip over
         pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
 
-        // 2. Calculate New Position and Rotation
         // Create rotation based on pitch (X axis) and yaw (Y axis)
         Quaternion currentRotation = Quaternion.Euler(pitch, yaw, 0f);
         
-        // Calculate the desired position by applying rotation to the offset, then adding to target position
-        Vector3 desiredPosition = target.position + currentRotation * offset;
+        if (isFirstPerson)
+        {
+            // Góc nhìn thứ nhất (First Person)
+            // Xoay offset Z theo hướng ngang của camera để đẩy camera ra phía trước mặt nhân vật
+            Quaternion horizontalRot = Quaternion.Euler(0, yaw, 0);
+            Vector3 headPos = target.position + Vector3.up * firstPersonOffset.y + horizontalRot * new Vector3(0, 0, firstPersonOffset.z);
+            
+            transform.position = headPos;
+            transform.rotation = currentRotation;
+        }
+        else
+        {
+            // Góc nhìn thứ ba (Third Person)
+            // Calculate the desired position by applying rotation to the offset, then adding to target position
+            Vector3 desiredPosition = target.position + currentRotation * thirdPersonOffset;
 
-        // Smoothly move the camera
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            // Smoothly move the camera
+            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
 
-        // 3. Make Camera look at the target (adjust slightly up so it looks at the head/body instead of feet)
-        transform.LookAt(target.position + Vector3.up * 1.5f);
+            // Make Camera look at the target
+            transform.LookAt(target.position + Vector3.up * 1.5f);
+        }
     }
 }

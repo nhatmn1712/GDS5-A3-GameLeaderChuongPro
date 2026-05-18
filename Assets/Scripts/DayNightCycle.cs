@@ -35,19 +35,42 @@ public class DayNightCycle : MonoBehaviour
     public AnimationCurve sunIntensity;
 
     [Header("Skybox Settings")]
-    public Material morningSkybox;   // 06:00 to 12:00
-    public Material noonSkybox;      // 12:00 to 16:00
-    public Material afternoonSkybox; // 16:00 to 18:00
-    public Material eveningSkybox;   // 18:00 to 20:00
-    public Material nightSkybox;     // 20:00 to 06:00
+    public Material afternoonSkybox; // 06:00 to 18:00 (Chiều)
+    public Material eveningSkybox;   // 18:00 to 20:00 (Tối)
+    public Material nightSkybox;     // 20:00 to 06:00 (Đêm)
+
+    [Header("Fog Settings (Sương mù)")]
+    [Tooltip("Bật tắt sương mù để che viền thế giới")]
+    public bool enableFog = true;
+    [Tooltip("Độ đặc của sương mù (thử 0.01 đến 0.05)")]
+    public float fogDensity = 0.02f;
+    
+    [Header("Fog Colors (Màu sương mù)")]
+    public bool autoChangeFogColor = true;
+    [Tooltip("Tốc độ chuyển màu sương mù mượt mà")]
+    public float fogColorBlendSpeed = 1f;
+    public Color afternoonFogColor = new Color(0.6f, 0.7f, 0.8f);
+    public Color eveningFogColor = new Color(0.8f, 0.4f, 0.2f);
+    public Color nightFogColor = new Color(0.02f, 0.02f, 0.05f);
+
+    [Header("Street Lights (Tự động đèn đường)")]
+    public bool autoControlStreetLights = true;
+    [Tooltip("Hệ số nhân độ sáng của tất cả các đèn khi trời tối")]
+    public float nightIntensityMultiplier = 5f;
+    [Tooltip("Hệ số nhân tầm chiếu xa (range) của các đèn khi trời tối")]
+    public float nightRangeMultiplier = 2f;
+
+    private struct LightData {
+        public Light light;
+        public float baseIntensity;
+        public float baseRange;
+    }
+    private LightData[] sceneLights;
 
     private float timeMultiplier;
 
     void Start()
     {
-        // Ensure fog is turned off completely
-        RenderSettings.fog = false;
-
         // Calculate how much the timeOfDay should increase per real-time second
         timeMultiplier = 24f / (dayDurationInMinutes * 60f);
     }
@@ -96,14 +119,30 @@ public class DayNightCycle : MonoBehaviour
         sunLight.color = sunColor.Evaluate(timePercent);
         sunLight.intensity = sunIntensity.Evaluate(timePercent);
 
+        // Ép ánh sáng môi trường (Ambient) tối dần theo mặt trời để cảnh đêm thực sự tối đen
+        RenderSettings.ambientIntensity = Mathf.Clamp01(sunLight.intensity);
+
+        // Bật/tắt và tăng độ sáng đèn đường
+        if (autoControlStreetLights && sceneLights != null)
+        {
+            // Tính độ tối (1.0 = tối thui, 0.0 = ban ngày)
+            float darkness = 1f - Mathf.Clamp01(sunLight.intensity);
+            
+            foreach (LightData data in sceneLights)
+            {
+                if (data.light != null)
+                {
+                    // Ban ngày tắt đèn (0), ban đêm sáng mạnh (nhân hệ số)
+                    data.light.intensity = data.baseIntensity * nightIntensityMultiplier * darkness;
+                    data.light.range = data.baseRange * nightRangeMultiplier;
+                }
+            }
+        }
+
         // Update Skybox smoothly based on time
         Material targetSkybox = null;
 
-        if (timeOfDay >= 6f && timeOfDay < 12f)
-            targetSkybox = morningSkybox;
-        else if (timeOfDay >= 12f && timeOfDay < 16f)
-            targetSkybox = noonSkybox;
-        else if (timeOfDay >= 16f && timeOfDay < 18f)
+        if (timeOfDay >= 6f && timeOfDay < 18f)
             targetSkybox = afternoonSkybox;
         else if (timeOfDay >= 18f && timeOfDay < 20f)
             targetSkybox = eveningSkybox;
@@ -115,6 +154,33 @@ public class DayNightCycle : MonoBehaviour
         {
             RenderSettings.skybox = targetSkybox;
             DynamicGI.UpdateEnvironment(); // Update the scene lighting
+        }
+
+        // Cập nhật Sương mù (Fog) liên tục
+        if (enableFog)
+        {
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = fogDensity;
+            
+            // Tự động đổi màu sương mù cho tiệp với các Skybox
+            if (autoChangeFogColor)
+            {
+                Color targetFogColor;
+                if (timeOfDay >= 6f && timeOfDay < 18f)
+                    targetFogColor = afternoonFogColor;
+                else if (timeOfDay >= 18f && timeOfDay < 20f)
+                    targetFogColor = eveningFogColor;
+                else
+                    targetFogColor = nightFogColor;
+
+                // Chuyển màu từ từ (mượt) thay vì giật cục
+                RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, targetFogColor, Time.deltaTime * fogColorBlendSpeed);
+            }
+        }
+        else
+        {
+            RenderSettings.fog = false;
         }
     }
 }

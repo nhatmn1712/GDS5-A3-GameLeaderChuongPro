@@ -66,7 +66,7 @@ public class NpcOrderInteract : MonoBehaviour
 
                 if (playerInRange && promptUI != null)
                 {
-                    promptUI.Show(orderText, actionHint);
+                    promptUI.Show(orderText, npcDisplayName, actionHint);
                 }
             }
         }
@@ -137,7 +137,7 @@ public class NpcOrderInteract : MonoBehaviour
             playerInRange = true;
             if (isReadyToOrder && promptUI != null)
             {
-                promptUI.Show(orderText, actionHint);
+                promptUI.Show(orderText, npcDisplayName, actionHint);
             }
         }
     }
