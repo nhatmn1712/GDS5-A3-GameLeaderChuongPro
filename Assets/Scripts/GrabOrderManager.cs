@@ -73,6 +73,9 @@ public class GrabOrderManager : MonoBehaviour
         // Don't generate a new order if one is already active or pending
         if (HasActiveOrder || HasPendingNotification) return;
 
+        // Don't generate Grab orders if the physical shop is closed!
+        if (RestaurantManager.Instance != null && !RestaurantManager.Instance.isShopOpen) return;
+
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {

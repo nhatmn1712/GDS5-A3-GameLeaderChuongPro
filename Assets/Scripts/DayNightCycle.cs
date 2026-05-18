@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class DayNightCycle : MonoBehaviour
 {
@@ -8,6 +9,17 @@ public class DayNightCycle : MonoBehaviour
     [Range(0, 24)]
     [Tooltip("Current time of day in hours (0-24).")]
     public float timeOfDay = 8f;
+
+    [Header("Night Freeze")]
+    [Tooltip("When time reaches this hour, the clock stops and night begins. Default = 24 (Midnight).")]
+    public float nightStartHour = 24f;
+
+    // ─── Public State ────────────────────────────────────────────────
+    /// <summary>True once the clock has frozen at nightStartHour.</summary>
+    public bool IsNight { get; private set; } = false;
+
+    /// <summary>Fired exactly once when night begins. Subscribe to react (close shop, trigger go-home sequence, etc.).</summary>
+    public static event Action OnNightHasFallen;
 
     [Header("Sun / Light Settings")]
     [Tooltip("The Directional Light in your scene representing the Sun.")]
@@ -48,12 +60,21 @@ public class DayNightCycle : MonoBehaviour
 
     void UpdateTime()
     {
+        // If it's already night, freeze the clock and do nothing
+        if (IsNight) return;
+
         timeOfDay += Time.deltaTime * timeMultiplier;
 
-        // Reset to midnight once we hit 24 hours
-        if (timeOfDay >= 24f)
+        // Check if we just crossed into night
+        if (timeOfDay >= nightStartHour)
         {
-            timeOfDay %= 24f;
+            timeOfDay = nightStartHour; // Pin time exactly at nightStartHour
+            IsNight = true;
+
+            Debug.Log("[DayNight] Night has fallen! Clock is now frozen.");
+
+            // Fire the event so other systems can react
+            OnNightHasFallen?.Invoke();
         }
     }
 

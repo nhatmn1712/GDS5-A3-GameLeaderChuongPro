@@ -49,6 +49,19 @@ public class FoodCartInteract : MonoBehaviour
     {
         if (!playerInRange) return;
 
+        // Nếu shop đang đóng cửa, không cho tương tác
+        if (RestaurantManager.Instance != null && !RestaurantManager.Instance.isShopOpen)
+        {
+            if (promptUI != null) promptUI.Hide();
+            if (isHolding)
+            {
+                isHolding = false;
+                holdTimer = 0f;
+                if (promptUI != null) promptUI.SetProgress(0f);
+            }
+            return;
+        }
+
         // Nếu chưa có khách gọi món thì hiện thông báo và không cho tương tác
         if (!PlayerInventory.hasActiveOrder)
         {
@@ -175,7 +188,11 @@ public class FoodCartInteract : MonoBehaviour
 
             if (promptUI != null)
             {
-                if (PlayerInventory.hasActiveOrder)
+                if (RestaurantManager.Instance != null && !RestaurantManager.Instance.isShopOpen)
+                {
+                    // Do nothing, Update will keep it hidden
+                }
+                else if (PlayerInventory.hasActiveOrder)
                     promptUI.Show(cartName, actionHint);
                 else
                     promptUI.Show(cartName, "Chưa có khách gọi món!");
