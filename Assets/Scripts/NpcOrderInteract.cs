@@ -44,6 +44,7 @@ public class NpcOrderInteract : MonoBehaviour
             dialogueText = "I would like 1 bowl of " + GetEnglishName(customer.desiredItem) + " please!";
             orderText = "F";
             actionHint = "Take Order";
+            npcDisplayName = "Customer";
         }
     }
 
