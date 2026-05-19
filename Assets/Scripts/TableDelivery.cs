@@ -80,7 +80,7 @@ public class TableDelivery : MonoBehaviour
         if (currentState == TableState.WaitingForFood)
         {
             // Luôn hiện nút E khi khách đang đợi thức ăn (dù player có đang cầm bát hay không)
-            if (activeUI != null) activeUI.Show("E", "Khách Hàng", "Giao đồ ăn");
+            if (activeUI != null) activeUI.Show("E", "Customer", "Giao đồ ăn");
 
             if (currentPlayer.IsHoldingItem())
             {
@@ -95,7 +95,7 @@ public class TableDelivery : MonoBehaviour
             // Wrong food - show reminder and let player press E again with correct bowl
             if (currentPlayer.IsHoldingItem())
             {
-                if (activeUI != null) activeUI.Show("E", "Khách Hàng", "Đổi món khác");
+                if (activeUI != null) activeUI.Show("E", "Customer", "Đổi món khác");
                 if (Input.GetKeyDown(deliverKey))
                 {
                     DeliverFood();

@@ -113,15 +113,18 @@ public class DialogueManager : MonoBehaviour
         // Set UI values
         nameText.text = line.speakerName;
         
-        if (line.speakerPortrait != null)
+        if (portraitImage != null)
         {
-            portraitImage.sprite = line.speakerPortrait;
-            portraitImage.enabled = true;
-            portraitImage.preserveAspect = true;
-        }
-        else
-        {
-            portraitImage.enabled = false;
+            if (line.speakerPortrait != null)
+            {
+                portraitImage.sprite = line.speakerPortrait;
+                portraitImage.enabled = true;
+                portraitImage.preserveAspect = true;
+            }
+            else
+            {
+                portraitImage.enabled = false;
+            }
         }
 
         // Start typing effect
